@@ -1,0 +1,44 @@
+{
+  "name": "iot_registry_portal",
+  "version": "1.0.0",
+  "description": "Web application allowing users to register and maintain their Internet of Things (IoT) devices.",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --inline",
+    "build": "NODE_ENV=production webpack -p"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kopecmartin/IoTRegistryPortal.git"
+  },
+  "keywords": [
+    "IoT",
+    "registration",
+    "portal",
+    "web",
+    "devices",
+    "maintenance"
+  ],
+  "author": "Martin Kopec",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kopecmartin/IoTRegistryPortal/issues"
+  },
+  "homepage": "https://github.com/kopecmartin/IoTRegistryPortal#readme",
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-router": "^3.0.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.22.0",
+    "babel-preset-stage-0": "^6.22.0",
+    "react-hot-loader": "^1.3.1",
+    "webpack": "^1.14.0",
+    "webpack-dev-server": "^1.16.2"
+  }
+}
