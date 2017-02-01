@@ -4,21 +4,12 @@ import React from 'react';
 
 export default class LoginPage extends React.Component {
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            username: "",
-            password: "",
-            error: false,
-            loginClicked: false,
-            hoverLoginForm: false,
-            pending: false
-        };
+   constructor(props, context) {
+        super(props, context);
     }
 
     login(data) {
-
+       
     }
 
     register(data) {

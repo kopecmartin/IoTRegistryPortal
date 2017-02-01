@@ -1,0 +1,27 @@
+[
+  {
+    "lang": "en",
+    "page": {
+      "login": {
+        "buttons": {
+          "login": "Sign In",
+          "register": "Sign Up",
+          "facebook": "Sign Up with Facebook",
+          "google": "Sign Up with Google",
+          "github": "Sign Up with GitHub"
+        },
+        "labels": {
+          "username": "Username",
+          "password": "Password"
+        },
+        "messages": {
+          "remember": "Remember username",
+          "forgot": "Forgot username or password?"
+        }
+      }
+    },
+    "warnings": {
+
+    }
+  }
+]

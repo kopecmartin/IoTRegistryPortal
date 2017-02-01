@@ -1,17 +1,12 @@
 import React from 'react';
 
 
-export default class Login extends React.Component {
+const Register = () => {
+    return (
+        <div>
 
-    constructor(props) {
-        super(props);
-    }
+        </div>
+    )
+};
 
-    render() {
-        return (
-            <div>
-
-            </div>
-        );
-    }
-}
+export default Register;
