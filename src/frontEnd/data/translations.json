@@ -18,6 +18,14 @@
           "remember": "Remember username",
           "forgot": "Forgot username or password?"
         }
+      },
+      "sidebar": {
+        "dashboard": "Dashboard",
+        "userGroups": "User Groups",
+        "devices": "Devices",
+        "registration": "Registration",
+        "dangerZone": "Danger Zone",
+        "settings": "Settings"
       }
     },
     "warnings": {

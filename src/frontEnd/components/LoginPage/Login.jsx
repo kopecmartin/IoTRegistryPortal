@@ -72,6 +72,6 @@ Login.propTypes = {
 };
 
 export default connect(
-    (state) => ({content: state.content.page.login}),
+    (state) => ({content: state.switchLanguage.content.page.login}),
     (dispatch) => ({switchLanguage: (lang) => dispatch(actions.switchLanguage(lang))})
 )(Login)

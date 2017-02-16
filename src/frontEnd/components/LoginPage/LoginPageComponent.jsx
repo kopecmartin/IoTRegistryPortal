@@ -55,20 +55,6 @@ export default class LoginPageComponent extends React.Component {
     }
 
     render() {
-        let form;
-        if(this.state.loginForm) {
-            form = (
-                <Login usernameOnChange={this.handlerOnChange.bind(this, "name")}
-                       passwordOnChange={this.handlerOnChange.bind(this, "password")}
-                       toggle={this.toggle.bind(this)}
-                       login={this.login.bind(this)}/>
-            )
-        } else {
-            form = (
-                <Register register={this.register.bind(this)}/>
-            )
-        }
-
         return (
             <div className="login-pf login-background">
 
@@ -80,7 +66,15 @@ export default class LoginPageComponent extends React.Component {
                                              alt="PatternFly Enterprise Application"/>
                             </div>
                         </div>
-                        {form}
+
+                        {this.state.loginForm ? (
+                            <Login usernameOnChange={this.handlerOnChange.bind(this, "name")}
+                                   passwordOnChange={this.handlerOnChange.bind(this, "password")}
+                                   toggle={this.toggle.bind(this)}
+                                   login={this.login.bind(this)}/>
+                        ) : (
+                            <Register register={this.register.bind(this)}/>
+                        )}
                     </div>
                 </div>
             </div>

@@ -1,4 +1,8 @@
 import { combineReducers } from 'redux'
-import switchLanguage from './switchLanguage.js'
+import changeSite from './changeSite'
+import switchLanguage from './switchLanguage'
 
-export default switchLanguage;
+export default combineReducers({
+    changeSite,
+    switchLanguage,
+})

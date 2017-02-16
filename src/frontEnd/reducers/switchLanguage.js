@@ -6,7 +6,7 @@ const initialState = {
     content: api.getContent() // Loads default language content (en) as an initial state
 };
 
-export default function reducer(state = initialState, action) {
+export default function switchLanguage(state = initialState, action) {
     switch (action.type) {
         case actionTypes.SWITCH_LANGUAGE:
             return {

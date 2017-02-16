@@ -2,6 +2,9 @@ import React from 'react';
 import {hashHistory} from 'react-router';
 import cookie from 'react-cookie';
 
+import Header from './components/Header.jsx';
+import SideBar from './components/SideBar.jsx';
+
 
 export default class Layout extends React.Component {
 
@@ -14,8 +17,11 @@ export default class Layout extends React.Component {
     render() {
         return (
             <div>
-                Layout after log in
-                {this.props.children}
+                <Header/>
+                    <SideBar/>
+                    <div style={{"marginLeft": 220}}>
+                        {this.props.children}
+                    </div>
             </div>
         );
     }
