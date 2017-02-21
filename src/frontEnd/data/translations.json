@@ -4,28 +4,31 @@
     "page": {
       "login": {
         "buttons": {
-          "login": "Sign In",
-          "register": "Sign Up",
           "facebook": "Sign Up with Facebook",
+          "github": "Sign Up with GitHub",
           "google": "Sign Up with Google",
-          "github": "Sign Up with GitHub"
+          "login": "Sign In",
+          "register": "Sign Up"
         },
         "labels": {
-          "username": "Username",
-          "password": "Password"
+          "confirmPassword": "Confirm your password",
+          "password": "Password",
+          "username": "Username"
         },
         "messages": {
-          "remember": "Remember username",
-          "forgot": "Forgot username or password?"
+          "forgot": "Forgot username or password?",
+          "haveAccount": "If you already have an account, you can sing in",
+          "or": "OR",
+          "remember": "Remember username"
         }
       },
       "sidebar": {
+        "dangerZone": "Danger Zone",
         "dashboard": "Dashboard",
-        "userGroups": "User Groups",
         "devices": "Devices",
         "registration": "Registration",
-        "dangerZone": "Danger Zone",
-        "settings": "Settings"
+        "settings": "Settings",
+        "userGroups": "User Groups"
       }
     },
     "warnings": {

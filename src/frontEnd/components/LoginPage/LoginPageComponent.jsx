@@ -40,7 +40,7 @@ export default class LoginPageComponent extends React.Component {
 
     login() {
         let data = {
-            username: this.state.username,
+            email: this.state.username,
             password: this.state.password
         };
         this.props.loginOnClick(data);
@@ -48,7 +48,7 @@ export default class LoginPageComponent extends React.Component {
 
     register() {
         let data = {
-            username: this.state.username,
+            email: this.state.username,
             password: this.state.password
         };
         this.props.registerOnClick(data);
@@ -73,7 +73,10 @@ export default class LoginPageComponent extends React.Component {
                                    toggle={this.toggle.bind(this)}
                                    login={this.login.bind(this)}/>
                         ) : (
-                            <Register register={this.register.bind(this)}/>
+                            <Register usernameOnChange={this.handlerOnChange.bind(this, "name")}
+                                      passwordOnChange={this.handlerOnChange.bind(this, "password")}
+                                      toggle={this.toggle.bind(this)}
+                                      register={this.register.bind(this)}/>
                         )}
                     </div>
                 </div>

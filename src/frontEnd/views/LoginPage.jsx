@@ -21,7 +21,8 @@ class LoginPage extends React.Component {
     }
 
     register(data) {
-
+        console.log("register");
+        console.log(data);
     }
 
     render() {

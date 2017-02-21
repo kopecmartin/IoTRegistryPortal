@@ -10,9 +10,11 @@ let actions = require('./../../actions/actions.js');
 
 const Login = ({usernameOnChange, passwordOnChange, login, toggle, content, switchLanguage}) => {
 
+    /*
     const switchL = () => {
         switchLanguage('lt');
     };
+    */
 
     return (
         <div>
@@ -47,13 +49,13 @@ const Login = ({usernameOnChange, passwordOnChange, login, toggle, content, swit
                     <span className="fa fa-google"/>
                     {content.buttons.google}
                 </a>
-                <a onClick={switchL} className="btn btn-block btn-social btn-github">
+                <a className="btn btn-block btn-social btn-github">
                     <span className="fa fa-github"/>
                     {content.buttons.github}
                 </a>
 
                 <div>
-                    OR
+                    {content.messages.or}
                     <button type="submit"
                             onClick={toggle}
                             className="btn btn-primary btn-lg"
