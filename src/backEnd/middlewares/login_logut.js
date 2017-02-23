@@ -1,4 +1,5 @@
 let User = require('../models/user.js');
+let jwt = require('jsonwebtoken');
 
 
 module.exports = function (app, _) {
@@ -10,27 +11,47 @@ module.exports = function (app, _) {
         console.log("login data", body);    //DEBUG
 
         // try find user's email in the database
-        User.find({email: body.email}, function (err, user) {
+        User.findOne({email: body.email}, function (err, user) {
             if (err) {
-                res.status(404).json({
+                res.status(403).json({   // forbidden
                     msg: "Name or password is incorrect!"
                 });
             }
             else {
                 // then check the password
-                if (user[0].password === body.password) {
-                    // send a token and other information (settings, name of the user, ...)
-                    // TODO: create token
-                    res.status(200).json({
-                        token: "token",
-                        data: "some data",
-                    });
-                }
-                else {
-                    res.status(404).json({  //TODO: find out the right return number
+                if (user.password != body.password) {
+                    res.status(403).json({   // forbidden
                         msg: "Name or password is incorrect!"
                     });
                 }
+                else {
+                    // send a token and other information (settings, name of the user, ...)
+                    let token = jwt.sign(user, app.get('superSecret'), {
+                        expiresIn: 1800  // in seconds => expires in 30 minutes
+                    });
+                    res.status(200).json({
+                        token: token,
+                        data: "some data",
+                    });
+                }
+            }
+        });
+    });
+
+    app.post('/auth', function (req, res) {
+
+        let body = _.pick(req.body, 'token');
+        // verifies secret and checks exp
+        // TODO this command just searches for a token, doesn't matter for which user???
+        // TODO use as the secret key, user's key, which was generated when the user has registered
+        jwt.verify(body.token, app.get('superSecret'), function(err, decoded) {
+            if (err) {
+                res.status(403).json({  // forbidden
+                    success: false,
+                    message: 'Failed to authenticate token.',
+                });
+            } else {
+                res.json({success: true});
             }
         });
     });

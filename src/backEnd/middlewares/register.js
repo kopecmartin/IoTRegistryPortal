@@ -24,6 +24,8 @@ module.exports = function(app, _) {
             }
             else {
                 // create a new user
+                // TODO create a key for the user, which is gonna be used for hashing tokens
+                // TODO when time left, add support for changing this key in user's settings
                 let newUser = User({
                     email: body.email,
                     password: body.password,
