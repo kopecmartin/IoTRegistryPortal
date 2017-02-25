@@ -3,15 +3,19 @@ let mongoose = require('mongoose');
 
 // create a schema
 let userSchema = new mongoose.Schema({
-    name: String,
+    // TODO check email validity
     email: { type: String, required: true, unique: true },
+    // TODO set minimum length of a password
     password: { type: String, required: true },
+    name: String,
     meta: {
+        firstName: String,
+        lastName: String,
         age: Number,
-        website: String
+        gender: String,
     },
-    created_at: Date,
-    updated_at: Date,
+    created_at: {type: Date, default: Date.now},
+    updated_at: {type: Date, default: Date.now},
 });
 
 //create a model
