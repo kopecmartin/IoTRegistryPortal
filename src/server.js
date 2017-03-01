@@ -5,7 +5,11 @@ let bodyParser = require('body-parser');
 let mongoose = require('mongoose');
 let morgan = require('morgan');
 
-let PORT = process.env.PORT || 3000;
+// import config
+let conf = require('./config.js');
+
+//let PORT = process.env.PORT || 3000;
+let PORT = conf.server.port;
 let app = express();
 
 app.use(express.static(__dirname + '/../public'));
@@ -25,7 +29,7 @@ require('./backEnd/middlewares/userGroups.js')(app, _);
 
 
 // Connect to the db
-mongoose.connect("mongodb://localhost:33333", function (err) {  //TODO move address to a config?
+mongoose.connect(conf.database.url, function (err) {  //TODO move address to a config?
     if (err) {
         console.log("Couldn't connect to the database!");
         console.log(err);

@@ -1,2 +1,4 @@
 node_modules/
 .idea/
+src/backEnd/database/*
+src/backEnd/tests/database/*
