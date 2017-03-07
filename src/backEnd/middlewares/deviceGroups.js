@@ -50,6 +50,9 @@ module.exports = function (app, _) {
             if (err) {
                 res.status(500).json({msg: "Internal database error"});
             }
+            else if (!group) {
+                res.status(404).json({msg: "Group doesn't exist!"});
+            }
             else if (group.email != body.email) {
                 res.status(403).json({msg: "Only the owner can update the device group!"});
             }
@@ -86,12 +89,12 @@ module.exports = function (app, _) {
         // retrieve information
         let body = _.pick(req.body, 'email', 'id');
 
-        DeviceGroup.findOne({id: body.id}, function (err, group) {
+        DeviceGroup.findById(body.id, function (err, group) {
             if (err) {
                 res.status(500).json({msg: "Internal database error"});
             }
             else if (!group) {
-                res.status(400).json({msg: "Group doesn't exist!"});
+                res.status(404).json({msg: "Group doesn't exist!"});
             }
             else if (group.email != body.email) {
                 res.status(403).json({msg: "Only the owner can delete the group!"});

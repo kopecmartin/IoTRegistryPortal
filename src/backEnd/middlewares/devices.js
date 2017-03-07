@@ -5,10 +5,10 @@ module.exports = function (app, _) {
     app.post('/device', function (req, res) {
 
         // retrieve information
-        // TODO email in API call is just temporary solution, it's needed to use an API key!!!
+        // TODO email in the API call is just a temporary solution, it's needed to use an API key!!!
         let body = _.pick(req.body, 'id', 'email', 'ioFeatures');
 
-        // let's check if the id is not already in database
+        // let's check if the id is not already in the database
         Device.findOne({id: body.id}, function (err, device) {
             if (err) {   // TODO ... is it an external error ???
                 res.status(500).json({msg: "Internal database error"});
@@ -39,7 +39,7 @@ module.exports = function (app, _) {
                     }
                     else {
                         //return the newly created device object
-                        res.status(201).json({newDevice});
+                        res.status(201).json(newDevice);
                     }
                 });
             }
@@ -58,16 +58,21 @@ module.exports = function (app, _) {
             if (err) {
                 res.status(500).json({msg: "Internal database error"});
             }
+            else if (!device) {
+                res.status(404).json({msg: "Device not found!"});
+            }
             else if (device.email != body.email) {
                 res.status(403).json({msg: "Only the owner can deregister the device!"});
             }
             else {
-                device.remove({id: body.id}, function (err, device) {
+                Device.findOneAndRemove({id: body.id}, function (err, device) {
                     if (err) {
                         res.status(500).json({msg: "Internal database error"});
                     }
-                    // return deleted device object - needed? TODO
-                    res.status(204).json(device);
+                    else {
+                        // return deleted device object
+                        res.status(204).json(device);
+                    }
                 });
             }
         })
@@ -75,13 +80,16 @@ module.exports = function (app, _) {
 
 
     app.put('/device', function (req, res) {
-        // for now, only the owner can update the group  // TODO ?
+        // for now, only the owner can update the device  // TODO ?
         // retrieve information
         let body = _.pick(req.body, 'email', 'id', 'deviceGroup', 'description', 'newOwnerEmail');
 
-        Device.findById(body.id, function (err, device) {
+        Device.findOne({id:body.id}, function (err, device) {
             if (err) {
                 res.status(500).json({msg: "Internal database error"});
+            }
+            else if (!device) {
+                res.status(404).json({msg: "Device was not found!"});
             }
             else if (device.email != body.email) {
                 res.status(403).json({msg: "Only the owner of the device can update it!"});

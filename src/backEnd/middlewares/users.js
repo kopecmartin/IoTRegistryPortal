@@ -9,8 +9,8 @@ module.exports = function (app, _) {
 
     app.post('/register', function (req, res) {
 
-        console.log("register", _.pick(req, 'email', 'password'));
         let body = _.pick(req.body, 'email', 'password');
+        console.log("register", _.pick(req.body, 'email', 'password'));
 
         // try find the email, if found => error
         User.find({email: body.email}, function (err, user) {
@@ -51,11 +51,15 @@ module.exports = function (app, _) {
 
         // retrieve information
         let body = _.pick(req.body, 'email', 'password');
-        console.log("login data", body);    //DEBUG
 
         // try find user's email in the database
         User.findOne({email: body.email}, function (err, user) {
             if (err) {
+                res.status(403).json({   // forbidden
+                    msg: "Name or password is incorrect!"
+                });
+            }
+            else if (!user) {
                 res.status(403).json({   // forbidden
                     msg: "Name or password is incorrect!"
                 });

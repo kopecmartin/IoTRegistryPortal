@@ -20,6 +20,7 @@ module.exports = function (app, _) {
             else if (groups.length > 0) {
                 res.status(400).json({msg: "A user group with the name already exists!"});
             }
+            // TODO check if the user exists ???
             else {
                 // create a new group
                 let newGroup = new UserGroup({
@@ -85,7 +86,7 @@ module.exports = function (app, _) {
                     });
                 }
                 else {
-                    res.status(200).json({msg: "Group is already updated."});
+                    res.status(200).json(group);
                 }
             }
         })
@@ -120,6 +121,7 @@ module.exports = function (app, _) {
                                 res.status(500).json({msg: "Internal error!"});
                             }
                             else {
+                                console.log(group);
                                 res.status(204).json(group)
                             }
                         })
@@ -157,7 +159,7 @@ module.exports = function (app, _) {
                 res.status(500).json({msg: "Internal database error."});
             }
             else if (!group) {
-                res.status(400).json({msg: "No such a group!"})
+                res.status(404).json({msg: "No such a group!"})
             }
             else if (group.email != body.email) {
                 res.status(403).json({msg: "Only the group owner can add a new member!"});
@@ -215,6 +217,9 @@ module.exports = function (app, _) {
             if (err) {
                 res.status(500).json({msg: "Internal database error"});
             }
+            else if (!group) {
+                res.status(404).json({msg: "Group does not exist!"});
+            }
             else if (group.email != body.email) {
                 res.status(403).json({msg: "Only the group owner can remove a member!"});
             }
@@ -225,7 +230,8 @@ module.exports = function (app, _) {
                         res.status(500).json({msg: "Internal database error"});
                     }
                     else {
-                        res.status(204);
+                        // return deleted object
+                        res.status(204).json(removed);
                     }
                 });
             }
@@ -237,18 +243,17 @@ module.exports = function (app, _) {
 
         // retrieve information
         let body = _.pick(req.body, 'email');
-
         // let's get list of objects where ID belongs to the group the user is member of
         UserGroupMem.find({email: body.email}, 'groupID', function (err, IDs) {
-            // get groupID our from objects to list => so create list of IDs
-            let arrIDs = [];
-            for (let i = 0; i < IDs.length; i++) {
-                arrIDs.push(IDs[i].groupID);
-            }
             if (err) {
                 res.status(500).json({msg: "Internal database error"});
             }
             else {
+                // get groupID our from objects to list => so create list of IDs
+                let arrIDs = [];
+                for (let i = 0; i < IDs.length; i++) {
+                    arrIDs.push(IDs[i].groupID);
+                }
                 // let's get list of group objects
                 UserGroup.findById({"$in": arrIDs}, function (err, groups) {
                     if (err) {
@@ -260,6 +265,11 @@ module.exports = function (app, _) {
                 });
             }
         });
+    });
+
+    app.post('/getGroupsByOwnership', function (req, res) {
+       // TODO
+
     });
 
 
@@ -274,12 +284,20 @@ module.exports = function (app, _) {
                 res.status(500).json({msg: "Internal database error"});
             }
             else {
+                let arrEmails = [];
+                for (let i = 0; i < emails.length; i++) {
+                    arrEmails.push(emails[i].email);
+                }
+
                 UserGroup.findById(body.id, function (err, group) {
                     if (err) {
+                        res.status(500).json({msg: "Internal database error"});
+                    }
+                    else if (!group) {
                         res.status(404).json({msg: "No such a group!"});
                     }
                     // check if the requester is the owner or a member
-                    else if (group.email != body.email && emails.indexOf(body.email) === -1) {
+                    else if (group.email != body.email && arrEmails.indexOf(body.email) === -1) {
                         //"_id": "58b2ef0bd184e92c30273f66",
                         res.status(403).json(
                             //TODO true/false?
@@ -288,7 +306,7 @@ module.exports = function (app, _) {
                     }
                     else {
                         // return a list of members' emails
-                        res.status(200).json(emails);
+                        res.status(200).json(arrEmails);
                     }
                 });
             }
