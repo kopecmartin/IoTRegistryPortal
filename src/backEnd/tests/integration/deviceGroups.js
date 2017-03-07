@@ -115,7 +115,9 @@ describe('Update - delete - find', function () {
             id: id
         };
 
-        requests.delRequest('/deviceGroup', body, 204).then((res) => {
+        requests.delRequest('/deviceGroup', body, 200).then((res) => {
+            res.body.email.should.be.equal(body.email);
+            res.body._id.should.be.equal(body.id);
         }).then(done, done);
     });
 

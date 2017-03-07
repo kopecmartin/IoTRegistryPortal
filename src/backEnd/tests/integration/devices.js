@@ -77,23 +77,15 @@ describe('Update - delete - find', function () {
     });
 
 
-/*
+
     it('deregister a device', function (done) {
 
-        request(conf.server.url)
-            .del('/device')
-            .send(data)
-            .end(function (err, res) {
-                if (err) {
-                    throw err;
-                }
-                res.status.should.be.equal(204);
-                res.body.email.should.be.equal(data.email);
-                res.body.id.should.be.equal(data.id);
-                done();
-            });
+        requests.delRequest('/device', data, 200).then((res) => {
+            res.body.email.should.be.equal(data.email);
+            res.body.id.should.be.equal(data.id);
+        }).then(done, done);
     });
-*/
+
 
     it('deregister a device by not the owner', function (done) {
         let body = {

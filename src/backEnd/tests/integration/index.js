@@ -4,6 +4,7 @@ let Device = require('../../models/device.js');
 let DeviceGroup = require('./../../models/deviceGroup.js');
 let User = require('../../models/user.js');
 let UserGroup = require('../../models/userGroup.js');
+let UserGroupMem = require('../../models/userGroupMem.js');
 
 
 describe('Testing Middleware', function () {
@@ -15,7 +16,9 @@ describe('Testing Middleware', function () {
             DeviceGroup.remove({}, function () {
                 User.remove({}, function () {
                     UserGroup.remove({}, function () {
-                        done();
+                        UserGroupMem.remove({}, function () {
+                            done();
+                        });
                     });
                 })
             });

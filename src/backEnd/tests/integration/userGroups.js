@@ -22,7 +22,7 @@ it('create user group', function (done) {
 });
 
 
-describe('---', function () {
+describe('update - delete - find', function () {
 
     let data = {
         email: "test2@test.mail",
@@ -121,7 +121,7 @@ describe('---', function () {
         }).then(done, done);
     });
 
-/*  // TODO
+
     it('delete group', function (done) {
 
         let body = {
@@ -129,12 +129,12 @@ describe('---', function () {
             id: id
         };
 
-        requests.delRequest('/userGroup', body, 204).then((res) => {
+        requests.delRequest('/userGroup', body, 200).then((res) => {
             res.body.email.should.be.equal(data.email);
-            res.body._id.should.be.equal(data.id);
+            res.body._id.should.be.equal(id);
         }).then(done, done);
     });
-*/
+
 
     it('delete group which is not in the database', function (done) {
 
@@ -301,7 +301,6 @@ describe('--- Group Members ---', function () {
     });
 
 
-/*
     it('delete group member', function (done) {
 
         let body = {
@@ -310,11 +309,13 @@ describe('--- Group Members ---', function () {
             memberEmail: newMember.email,
         };
 
-        requests.delRequest('/userGroupMember', body, 204).then((res) => {
-            res.body.email.should.be.equal(body.memberEmail);   //TODO
-        }).then(done, done);
+        // create a member first
+        requests.postRequest('/userGroupMember', body, 201).then((res) => {
+            requests.delRequest('/userGroupMember', body, 200).then((res) => {
+                res.body.email.should.be.equal(body.memberEmail);   //TODO
+            }).then(done, done);
+        });
     });
-*/
 
 
     it('delete group member for not the group owner', function (done) {
@@ -330,20 +331,6 @@ describe('--- Group Members ---', function () {
     });
 
 
-/*    // TODO ??
-    it('delete group member, member does not exist', function (done) {
-
-        let body = {
-            email: data.email,
-            id: id,
-            memberEmail: "doesNotExist@mail.com",
-        };
-
-        requests.delRequest('/userGroupMember', body, 404).then((res) => {
-        }).then(done, done);
-    });
-*/
-
     it('delete group member, group does not exist', function (done) {
 
         let body = {
@@ -357,17 +344,25 @@ describe('--- Group Members ---', function () {
     });
 
 
-/*
     it('get groups by membership', function (done) {
 
         let body = {
+            email: data.email,
+            id: id,
+            memberEmail: newMember.email,
+        };
+
+        let body2 = {
             email: newMember.email,
         };
 
-        requests.postRequest('/getGroupsByMembership', body, 200).then((res) => {
-            res.body.length.should.be.equal(1);
-            res.body[0].name.should.be.equal(data.name);
-        }).then(done, done);
+        // create a member first
+        requests.postRequest('/userGroupMember', body, 201).then((res) => {
+            requests.postRequest('/getGroupsByMembership', body2, 200).then((res) => {
+                res.body.length.should.be.equal(1);
+                res.body[0].name.should.be.equal(data.name);
+            }).then(done, done);
+        });
     });
 
 
@@ -381,9 +376,8 @@ describe('--- Group Members ---', function () {
             res.body.length.should.be.equal(0);
         }).then(done, done);
     });
-*/
 
-/*  // TODO
+
     it('get groups by ownership', function (done) {
 
         let body = {
@@ -391,10 +385,22 @@ describe('--- Group Members ---', function () {
         };
 
         requests.postRequest('/getGroupsByOwnership', body, 200).then((res) => {
+            res.body.length.should.be.equal(1);
+            res.body[0].name.should.be.equal(data.name);
+        }).then(done, done);
+    });
+
+
+    it('get groups by ownership, no groups', function (done) {
+
+        let body = {
+            email: newMember.email,
+        };
+
+        requests.postRequest('/getGroupsByOwnership', body, 200).then((res) => {
             res.body.length.should.be.equal(0);
         }).then(done, done);
     });
-*/
 
 
     it('get members of a group for the group owner', function (done) {
@@ -410,14 +416,13 @@ describe('--- Group Members ---', function () {
             id: id,
         };
 
-        // create a member
+        // create a member first
         requests.postRequest('/userGroupMember', body, 201).then((res) => {
-            requests.postRequest('/getUserGroupMembers', body, 200).then((res) => {
+            requests.postRequest('/getUserGroupMembers', body2, 200).then((res) => {
                 res.body.length.should.be.equal(1);
                 res.body[0].should.be.equal(newMember.email);
             }).then(done, done);
         });
-
     });
 
 
