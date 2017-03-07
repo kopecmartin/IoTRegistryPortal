@@ -71,7 +71,7 @@ module.exports = function (app, _) {
                     }
                     else {
                         // return deleted device object
-                        res.status(204).json(device);
+                        res.status(200).json(device);
                     }
                 });
             }

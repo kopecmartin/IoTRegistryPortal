@@ -102,12 +102,12 @@ module.exports = function (app, _) {
             else {
                 // TODO check if the group contains devices, if so, move them to / group
 
-                DeviceGroup.findOneAndRemove({id: body.id}, function (err, group) {
+                DeviceGroup.findByIdAndRemove(body.id, function (err, group) {
                     if (err) {
                         res.status(500).json({msg: "Internal database error"});
                     }
                     else {
-                        res.status(204).json(group);
+                        res.status(200).json(group);
                     }
                 });
             }

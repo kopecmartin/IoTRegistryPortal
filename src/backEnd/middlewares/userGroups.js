@@ -121,8 +121,7 @@ module.exports = function (app, _) {
                                 res.status(500).json({msg: "Internal error!"});
                             }
                             else {
-                                console.log(group);
-                                res.status(204).json(group)
+                                res.status(200).json(group)
                             }
                         })
                     }
@@ -225,13 +224,13 @@ module.exports = function (app, _) {
             }
             else {
                 // remove the member
-                UserGroupMem.remove({email: body.memberEmail, groupID: body.id}, function (err, removed) {
+                UserGroupMem.findOneAndRemove({email: body.memberEmail, groupID: body.id}, function (err, removed) {
                     if (err) {
                         res.status(500).json({msg: "Internal database error"});
                     }
                     else {
                         // return deleted object
-                        res.status(204).json(removed);
+                        res.status(200).json(removed);
                     }
                 });
             }
@@ -243,6 +242,7 @@ module.exports = function (app, _) {
 
         // retrieve information
         let body = _.pick(req.body, 'email');
+
         // let's get list of objects where ID belongs to the group the user is member of
         UserGroupMem.find({email: body.email}, 'groupID', function (err, IDs) {
             if (err) {
@@ -255,7 +255,7 @@ module.exports = function (app, _) {
                     arrIDs.push(IDs[i].groupID);
                 }
                 // let's get list of group objects
-                UserGroup.findById({"$in": arrIDs}, function (err, groups) {
+                UserGroup.find({ '_id': {$in: arrIDs}}, function (err, groups) {
                     if (err) {
                         res.status(500).json({msg: "Internal database error"});
                     }
@@ -268,8 +268,18 @@ module.exports = function (app, _) {
     });
 
     app.post('/getGroupsByOwnership', function (req, res) {
-       // TODO
 
+        // retrieve information
+        let body = _.pick(req.body, 'email');
+
+        UserGroup.find({email: body.email}, function (err, groups) {
+            if (err) {
+                res.status(500).json({msg: "Internal database error"});
+            }
+            else {
+                res.status(200).json(groups);
+            }
+        });
     });
 
 
