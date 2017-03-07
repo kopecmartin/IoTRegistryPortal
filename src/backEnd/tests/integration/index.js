@@ -3,6 +3,7 @@ let conf = require('../../../config.js');
 let Device = require('../../models/device.js');
 let DeviceGroup = require('./../../models/deviceGroup.js');
 let User = require('../../models/user.js');
+let UserGroup = require('../../models/userGroup.js');
 
 
 describe('Testing Middleware', function () {
@@ -13,7 +14,9 @@ describe('Testing Middleware', function () {
         Device.remove({}, function () {
             DeviceGroup.remove({}, function () {
                 User.remove({}, function () {
-                    done();
+                    UserGroup.remove({}, function () {
+                        done();
+                    });
                 })
             });
         });
@@ -30,6 +33,10 @@ describe('Testing Middleware', function () {
 
     describe('Users', function () {
         require('./users.js');
+    });
+
+    describe('UserGroups', function () {
+        require('./userGroups.js');
     });
 
 });
