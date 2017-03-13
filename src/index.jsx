@@ -20,6 +20,7 @@ import reducer from './frontEnd/reducers/index';
 const store = createStore(reducer);
 console.log("store", store.getState());
 
+// TODO create independent register page, so it has its own URL
 ReactDOM.render(
     <Provider store={store}>
         <Router history={hashHistory}>
