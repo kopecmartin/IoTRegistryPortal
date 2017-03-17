@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-const InputLabelForm = ({errorMsg, help, label, onBlur, onChange, placeholder, required, type, validity}) => {
+const InputLabelForm = ({help, label, onBlur, onChange, placeholder, required, type, validity}) => {
 
     let valid = validity || "";
 
@@ -11,10 +11,6 @@ const InputLabelForm = ({errorMsg, help, label, onBlur, onChange, placeholder, r
 
     if (required != null) {
         required = <small className="form-text text-muted" style={{color: "red"}}>*</small>;
-    }
-
-    if (errorMsg != null) {
-        errorMsg = <strong className="form-text alert alert-danger">{errorMsg}</strong>;
     }
 
     return (
@@ -30,7 +26,6 @@ const InputLabelForm = ({errorMsg, help, label, onBlur, onChange, placeholder, r
                     onBlur={onBlur}/>
                 {help}
             </div>
-            {errorMsg}
         </div>
     )
 };
