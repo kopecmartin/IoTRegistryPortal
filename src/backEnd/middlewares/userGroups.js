@@ -131,14 +131,14 @@ module.exports = function (app, _) {
     });
 
 
-    app.post('/getUserGroups', function (req, res) {
+    app.post('/getGroupsByOwnership', function (req, res) {
 
         // retrieve information
-        let body = _.pick(req.body, "email");
+        let body = _.pick(req.body, 'email');
 
         UserGroup.find({email: body.email}, function (err, groups) {
             if (err) {
-                res.status(500).json({msg: "Internal database error."});
+                res.status(500).json({msg: "Internal database error"});
             }
             else {
                 res.status(200).json(groups);
@@ -263,21 +263,6 @@ module.exports = function (app, _) {
                         res.status(200).json(groups);
                     }
                 });
-            }
-        });
-    });
-
-    app.post('/getGroupsByOwnership', function (req, res) {
-
-        // retrieve information
-        let body = _.pick(req.body, 'email');
-
-        UserGroup.find({email: body.email}, function (err, groups) {
-            if (err) {
-                res.status(500).json({msg: "Internal database error"});
-            }
-            else {
-                res.status(200).json(groups);
             }
         });
     });

@@ -160,25 +160,27 @@ describe('update - delete - find', function () {
     });
 
 
-    it('get groups of the user', function (done) {
+    it('get groups by ownership', function (done) {
 
         let body = {
             email: data.email,
         };
 
-        requests.postRequest('/getUserGroups', body, 200).then((res) => {
+        requests.postRequest('/getGroupsByOwnership', body, 200).then((res) => {
+            res.body.length.should.be.equal(1);
+            res.body[0].name.should.be.equal(data.name);
             res.body[0].email.should.be.equal(data.email);
         }).then(done, done);
     });
 
 
-    it('get empty list of groups of the user', function (done) {
+    it('get groups by ownership, no groups', function (done) {
 
         let body = {
             email: "doNotHaveGroups@mail.com",
         };
 
-        requests.postRequest('/getUserGroups', body, 200).then((res) => {
+        requests.postRequest('/getGroupsByOwnership', body, 200).then((res) => {
             res.body.length.should.be.equal(0);
         }).then(done, done);
     });
@@ -373,31 +375,6 @@ describe('--- Group Members ---', function () {
         };
 
         requests.postRequest('/getGroupsByMembership', body, 200).then((res) => {
-            res.body.length.should.be.equal(0);
-        }).then(done, done);
-    });
-
-
-    it('get groups by ownership', function (done) {
-
-        let body = {
-            email: data.email,
-        };
-
-        requests.postRequest('/getGroupsByOwnership', body, 200).then((res) => {
-            res.body.length.should.be.equal(1);
-            res.body[0].name.should.be.equal(data.name);
-        }).then(done, done);
-    });
-
-
-    it('get groups by ownership, no groups', function (done) {
-
-        let body = {
-            email: newMember.email,
-        };
-
-        requests.postRequest('/getGroupsByOwnership', body, 200).then((res) => {
             res.body.length.should.be.equal(0);
         }).then(done, done);
     });
