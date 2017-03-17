@@ -29,10 +29,18 @@
         "registration": "Registration",
         "settings": "Settings",
         "userGroups": "User Groups"
+      },
+      "userGroups": {
+        "headers": {
+          "name": "Group Name",
+          "description": "Description",
+          "membersNo": "Members No.",
+          "subgroups": "Subgroups No."
+        }
       }
     },
     "warnings": {
-
+      "requiredFields": "Fill all required fields!"
     }
   }
 ]
