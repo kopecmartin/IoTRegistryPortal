@@ -22,6 +22,7 @@ export const sendPostRequest = function (API_TYPE, data) {
                 if (err != null || !res.ok) {
                     console.log(err);
                     console.log("error in request");
+                    reject(res);
                 } else {
                     resolve(res);
                 }
@@ -48,6 +49,7 @@ export const sendPutRequest = function (API_TYPE, data) {
                 console.log(res);  //debug
                 if (err != null || !res.ok) {
                     console.log("error in request");
+                    reject(res);
                 } else {
                     resolve(res);
                 }
@@ -74,6 +76,7 @@ export const sendDeleteRequest = function (API_TYPE, data) {
                 console.log(res);  //debug
                 if (err != null || !res.ok) {
                     console.log("error in request");
+                    reject(res);
                 } else {
                     resolve(res);
                 }

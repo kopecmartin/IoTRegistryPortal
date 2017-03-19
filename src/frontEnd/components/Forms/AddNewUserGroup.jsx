@@ -1,6 +1,8 @@
 import React from 'react';
+
 import InputLabelForm from './InputLabelForm.jsx';
 import FormButtons from './FormButtons.jsx';
+import {sendPostRequest} from '../../helpers/HTTP_requests.js';
 
 
 export default class UserGroups extends React.Component {
@@ -13,6 +15,7 @@ export default class UserGroups extends React.Component {
             description: "",
             permissions: "",
 
+            errorMsg: null,
             nameRequired: null,
             pending: false,
         }
@@ -39,18 +42,26 @@ export default class UserGroups extends React.Component {
     }
 
     handlerSubmitBtn() {
+        //TODO obtain user's email from cookies/redux
         let data = {
+            email: "testUser2@mail.com",
             name: this.state.name,
             description: this.state.description,
-            permissions: this.state.permissions,
+            permissions: 666,// this.state.permissions,
+            //path: this.state.path,
         };
         // TODO add email of the user
         // TODO call backend
         this.setState({pending: true});
-        console.log(data);
+        console.log("submitting", data);
 
-        //this.setState({pending: false});
-        //this.props.cancel()
+        sendPostRequest("CREATE_USER_GROUP", data).then((res) => {
+            console.log("created", JSON.parse(res.text));
+            this.setState({pending: false});
+            this.props.cancel()
+        }, (err) => {
+            this.setState({errorMsg: JSON.parse(err.text).msg, pending: false});
+        });
     }
 
     render() {
@@ -82,7 +93,7 @@ export default class UserGroups extends React.Component {
 
                 <FormButtons submit={this.handlerSubmitBtn.bind(this)}
                              cancel={this.props.cancel}
-                             errorMsg={this.state.nameRequired == null ? null : required}
+                             errorMsg={this.state.nameRequired ? required : this.state.errorMsg}
                              pending={this.state.pending}
                 />
             </div>

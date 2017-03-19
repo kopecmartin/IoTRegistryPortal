@@ -51,6 +51,7 @@ export default class UserGroups extends React.Component {
 
     addNewItemTrigger() {
         this.setState({addNewItemClicked: !this.state.addNewItemClicked});
+        this.fetchOwnGroupsData();
     }
 
     render() {
