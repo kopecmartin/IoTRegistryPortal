@@ -9,5 +9,7 @@ module.exports = {
     },
     "test-database": {
         "url": ""
-    }
+    },
+    // language of backend warnings
+    "language": "en" // en = English,
 };

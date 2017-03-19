@@ -1,5 +1,5 @@
 let request = require('supertest');
-let conf = require('../../config.js');
+let conf = require('../config/config.js');
 
 
 module.exports = {

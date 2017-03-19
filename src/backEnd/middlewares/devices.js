@@ -1,4 +1,7 @@
 let Device = require('./../models/device.js');
+let getTranslation =require('../helpers/translations.js');
+let messageTypes = require('../helpers/messageTypes.js');
+
 
 module.exports = function (app, _) {
 
@@ -11,7 +14,7 @@ module.exports = function (app, _) {
         // let's check if the id is not already in the database
         Device.findOne({id: body.id}, function (err, device) {
             if (err) {   // TODO ... is it an external error ???
-                res.status(500).json({msg: "Internal database error"});
+                res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
             }
             else if (device) {  // device already exists => update ioFeatures
                 device.ioFeatures = body.ioFeatures;
@@ -19,7 +22,7 @@ module.exports = function (app, _) {
 
                 device.save(function (err) {
                     if (err) {
-                        res.status(500).json({msg: "Internal database error"});
+                        res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                     } else {
                         res.status(200).json(device); //return the updated device object
                     }
@@ -35,7 +38,7 @@ module.exports = function (app, _) {
                 // save the device
                 newDevice.save(function (err) {
                     if (err) {
-                        res.status(500).json({msg: "Internal database error"});
+                        res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                     }
                     else {
                         //return the newly created device object
@@ -56,18 +59,18 @@ module.exports = function (app, _) {
 
         Device.findOne({id: body.id}, function (err, device) {
             if (err) {
-                res.status(500).json({msg: "Internal database error"});
+                res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
             }
             else if (!device) {
-                res.status(404).json({msg: "Device not found!"});
+                res.status(404).json({msg: getTranslation(messageTypes.DEVICE_NOT_FOUND)});
             }
             else if (device.email != body.email) {
-                res.status(403).json({msg: "Only the owner can deregister the device!"});
+                res.status(403).json({msg: getTranslation(messageTypes.DEVICE_DEREGISTER_INFO)});
             }
             else {
                 Device.findOneAndRemove({id: body.id}, function (err, device) {
                     if (err) {
-                        res.status(500).json({msg: "Internal database error"});
+                        res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                     }
                     else {
                         // return deleted device object
@@ -86,13 +89,13 @@ module.exports = function (app, _) {
 
         Device.findOne({id:body.id}, function (err, device) {
             if (err) {
-                res.status(500).json({msg: "Internal database error"});
+                res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
             }
             else if (!device) {
-                res.status(404).json({msg: "Device was not found!"});
+                res.status(404).json({msg: getTranslation(messageTypes.DEVICE_NOT_FOUND)});
             }
             else if (device.email != body.email) {
-                res.status(403).json({msg: "Only the owner of the device can update it!"});
+                res.status(403).json({msg: getTranslation(messageTypes.DEVICE_UPDATE_INFO)});
             }
             else {
                 if (body.deviceGroup) {
@@ -111,7 +114,7 @@ module.exports = function (app, _) {
 
                     device.save(function (err) {
                         if (err) {
-                            res.status(500).json({msg: "Internal database error"});
+                            res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                         } else {
                             res.status(200).json(device); //return the updated group object
                         }

@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-let conf = require('../../../config.js');
+let conf = require('../../config/config.js');
 let Device = require('../../models/device.js');
 let DeviceGroup = require('./../../models/deviceGroup.js');
 let User = require('../../models/user.js');

@@ -6,7 +6,7 @@ let mongoose = require('mongoose');
 let morgan = require('morgan');
 
 // import config
-let conf = require('./config.js');
+let conf = require('./backEnd/config/config.js');
 
 //let PORT = process.env.PORT || 3000;
 let PORT = conf.server.port;

@@ -4,7 +4,7 @@ let assert = require('assert');
 let request = require('supertest');
 let requests = require('../API_test_requests.js');
 
-let conf = require('../../../config.js');
+let conf = require('../../config/config.js');
 let User = require('../../models/user');
 let UserGroup = require('./../../models/userGroup.js');
 

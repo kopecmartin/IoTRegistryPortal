@@ -1,6 +1,8 @@
-let User = require('../models/user.js');
+let getTranslation =require('../helpers/translations.js');
 let jwt = require('jsonwebtoken');
+let messageTypes = require('../helpers/messageTypes.js');
 let moment = require('moment');
+let User = require('../models/user.js');
 
 // TODO in each API request check if token is valid and if the user has rights to get an response
 
@@ -15,11 +17,11 @@ module.exports = function (app, _) {
         // try find the email, if found => error
         User.find({email: body.email}, function (err, user) {
             if (err) {
-                res.status(500).json({msg: "Internal error"});
+                res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
             }
             else if (user.length > 0) {
                 res.status(400).json({
-                    msg: "User already exists. Use a different email.",
+                    msg: getTranslation(messageTypes.USER_ALREADY_REGISTERED),
                 });
             }
             else {
@@ -35,7 +37,7 @@ module.exports = function (app, _) {
                 // save the user
                 newUser.save(function (err) {
                     if (err) {
-                        res.status(500).json({msg: "Internal database error"});
+                        res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                     }
                     else {
                         // return the newly created object
@@ -56,12 +58,12 @@ module.exports = function (app, _) {
         User.findOne({email: body.email}, function (err, user) {
             if (err) {
                 res.status(403).json({   // forbidden
-                    msg: "Name or password is incorrect!"
+                    msg: getTranslation(messageTypes.NAME_PASSWORD_INCORRECT)
                 });
             }
             else if (!user) {
                 res.status(403).json({   // forbidden
-                    msg: "Name or password is incorrect!"
+                    msg:getTranslation(messageTypes.NAME_PASSWORD_INCORRECT)
                 });
             }
             else {
@@ -69,7 +71,7 @@ module.exports = function (app, _) {
                 // TODO decrypt password first
                 if (user.password != body.password) {
                     res.status(403).json({   // forbidden
-                        msg: "Name or password is incorrect!"
+                        msg: getTranslation(messageTypes.NAME_PASSWORD_INCORRECT)
                     });
                 }
                 else {
@@ -138,10 +140,10 @@ module.exports = function (app, _) {
 
         User.findOne({email: body.email}, function (err, user) {
             if (err) {
-                res.status(500).json({msg: "Internal error"});
+                res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
             }
             else if (!user) {
-                res.status(404).json({msg: "User not found!"});
+                res.status(404).json({msg: getTranslation(messageTypes.USER_NOT_FOUND)});
             }
             // TODO verify token ...
             else {
@@ -169,14 +171,14 @@ module.exports = function (app, _) {
                     user.updated_at = new Date();
                     user.save(function (err) {
                         if (err) {
-                            res.status(500).json({msg: "Internal database error!"});
+                            res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                         } else {
                             res.status(200).json(user); //return the updated user object
                         }
                     });
                 }
                 else {
-                    res.status(200).json({msg: "User is already updated."});
+                    res.status(200).json({msg: getTranslation(messageTypes.USER_ALREADY_UPDATED)});
                 }
             }
         })
