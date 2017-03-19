@@ -135,13 +135,38 @@ module.exports = function (app, _) {
 
         // retrieve information
         let body = _.pick(req.body, 'email');
-
-        UserGroup.find({email: body.email}, function (err, groups) {
+        console.log(body);
+        UserGroup.find({email: body.email}).lean().exec(function (err, groups) {
             if (err) {
                 res.status(500).json({msg: "Internal database error"});
             }
             else {
-                res.status(200).json(groups);
+                let counter = 0;
+                for(let i=0; i<groups.length; i++) {
+                    getUserGroupMembers({email: body.email, id: groups[i]._id}).then((members) => {
+                        groups[i]['additionalInfoLst'] = [
+                            {
+                                name: "Members",
+                                number: members.length
+                            }
+                        ];
+                        counter++;
+                        if (counter == groups.length) {
+                            res.status(200).json(groups);
+                        }
+                    }, (errCode) => {
+                        groups[i]['additionalInfoLst'] = [
+                            {
+                                name: "Members",
+                                number: "?"
+                            }
+                        ];
+                        counter++;
+                        if (counter == groups.length) {
+                            res.status(200).json(groups);
+                        }
+                    });
+                }
             }
         });
     });
@@ -255,55 +280,100 @@ module.exports = function (app, _) {
                     arrIDs.push(IDs[i].groupID);
                 }
                 // let's get list of group objects
-                UserGroup.find({ '_id': {$in: arrIDs}}, function (err, groups) {
+                UserGroup.find({ '_id': {$in: arrIDs}}).lean().exec(function (err, groups) {
                     if (err) {
                         res.status(500).json({msg: "Internal database error"});
                     }
                     else {
-                        res.status(200).json(groups);
+                        let counter = 0;
+                        for(let i=0; i<groups.length; i++) {
+                            getUserGroupMembers({email: body.email, id: groups[i]._id}).then((members) => {
+                                groups[i]['additionalInfoLst'] = [
+                                    {
+                                        name: "Members",
+                                        number: members.length
+                                    }
+                                ];
+                                counter++;
+                                if (counter == groups.length) {
+                                    res.status(200).json(groups);
+                                }
+                            }, (errCode) => {
+                                groups[i]['additionalInfoLst'] = [
+                                    {
+                                        name: "Members",
+                                        number: "?"
+                                    }
+                                ];
+                                counter++;
+                                if (counter == groups.length) {
+                                    res.status(200).json(groups);
+                                }
+                            });
+                        }
                     }
                 });
             }
         });
     });
 
+    const getUserGroupMembers = function (body) {
+        console.log("HERE");
+        return new Promise((resolve, reject) => {
+            // let's get a list of objects where emails belongs to members of the group specified by id
+            UserGroupMem.find({groupID: body.id}, 'email', function (err, emails) {
+                if (err) {
+                    reject(500)
+                }
+                else {
+                    let arrEmails = [];
+                    for (let i = 0; i < emails.length; i++) {
+                        arrEmails.push(emails[i].email);
+                    }
+
+                    UserGroup.findById(body.id, function (err, group) {
+                        if (err) {
+                            reject(500)
+                        }
+                        else if (!group) {
+                            reject(404)
+                        }
+                        // check if the requester is the owner or a member
+                        else if (group.email != body.email && arrEmails.indexOf(body.email) === -1) {
+                            //"_id": "58b2ef0bd184e92c30273f66",
+                            reject(403)
+                        }
+                        else {
+                            // return a list of members' emails
+                            console.log("finished", arrEmails);
+                            resolve(arrEmails)
+                        }
+                    });
+                }
+            });
+        });
+    };
 
     app.post('/getUserGroupMembers', function (req, res) {
 
         // retrieve information
         let body = _.pick(req.body, 'email', 'id');  // requester's email and id of the group
 
-        // let's get a list of objects where emails belongs to members of the group specified by id
-        UserGroupMem.find({groupID: body.id}, 'email', function (err, emails) {
-            if (err) {
-                res.status(500).json({msg: "Internal database error"});
-            }
-            else {
-                let arrEmails = [];
-                for (let i = 0; i < emails.length; i++) {
-                    arrEmails.push(emails[i].email);
-                }
-
-                UserGroup.findById(body.id, function (err, group) {
-                    if (err) {
-                        res.status(500).json({msg: "Internal database error"});
-                    }
-                    else if (!group) {
-                        res.status(404).json({msg: "No such a group!"});
-                    }
-                    // check if the requester is the owner or a member
-                    else if (group.email != body.email && arrEmails.indexOf(body.email) === -1) {
-                        //"_id": "58b2ef0bd184e92c30273f66",
-                        res.status(403).json(
-                            //TODO true/false?
-                            {msg: "Only a member or the owner can access list of others in the group!"}
-                        );
-                    }
-                    else {
-                        // return a list of members' emails
-                        res.status(200).json(arrEmails);
-                    }
-                });
+        getUserGroupMembers(body).then((members) => {
+            res.status(200).json(members);
+        }, (errCode) => {
+            switch (errCode) {
+                case 500:
+                    res.status(500).json({msg: "Internal database error"});
+                    break;
+                case 404:
+                    res.status(404).json({msg: "No such a group!"});
+                    break;
+                case 403:
+                    res.status(403).json(
+                        //TODO true/false?
+                        {msg: "Only a member or the owner can access list of others in the group!"}
+                    );
             }
         });
     });
