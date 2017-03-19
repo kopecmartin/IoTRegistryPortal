@@ -142,6 +142,9 @@ module.exports = function (app, _) {
             if (err) {
                 res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
             }
+            else if(groups.length == 0) {
+                res.status(200).json(groups);
+            }
             else {
                 let counter = 0;
                 for(let i=0; i<groups.length; i++) {
@@ -285,6 +288,9 @@ module.exports = function (app, _) {
                 UserGroup.find({ '_id': {$in: arrIDs}}).lean().exec(function (err, groups) {
                     if (err) {
                         res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                    }
+                    else if (groups.length == 0) {
+                        res.status(200).json(groups);
                     }
                     else {
                         let counter = 0;

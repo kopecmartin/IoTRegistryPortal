@@ -170,6 +170,7 @@ describe('update - delete - find', function () {
             res.body.length.should.be.equal(1);
             res.body[0].name.should.be.equal(data.name);
             res.body[0].email.should.be.equal(data.email);
+            res.body[0].additionalInfoLst.length.should.be.equal(1);
         }).then(done, done);
     });
 
@@ -363,6 +364,7 @@ describe('--- Group Members ---', function () {
             requests.postRequest('/getGroupsByMembership', body2, 200).then((res) => {
                 res.body.length.should.be.equal(1);
                 res.body[0].name.should.be.equal(data.name);
+                res.body[0].additionalInfoLst.length.should.be.equal(1);
             }).then(done, done);
         });
     });
