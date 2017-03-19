@@ -3,6 +3,7 @@ import AdditionalInfo from './AdditionalInfo.jsx';
 
 
 const ListItem = ({data}) => {
+
     return (
         <div className="list-group-item">
             <div className="list-view-pf-checkbox">
@@ -38,7 +39,6 @@ const ListItem = ({data}) => {
                     </div>
                     <div className="list-view-pf-additional-info">
                         <AdditionalInfo name={data.additionalInfoLst[0].name} number={data.additionalInfoLst[0].number}/>
-                        <AdditionalInfo name={data.additionalInfoLst[1].name} number={data.additionalInfoLst[1].number}/>
                     </div>
                 </div>
             </div>

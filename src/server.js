@@ -1,7 +1,7 @@
 let express = require('express');
 let _ = require('underscore');
 let bodyParser = require('body-parser');
-//let cors = require('cors');     //allows cross-origin HTTP requests
+let cors = require('cors');     //allows cross-origin HTTP requests
 let mongoose = require('mongoose');
 let morgan = require('morgan');
 
@@ -14,7 +14,7 @@ let app = express();
 
 app.use(express.static(__dirname + '/../public'));
 app.use(bodyParser.json());
-//app.use(cors());
+app.use(cors());
 
 // use morgan for request debug output
 app.use(morgan('dev'));

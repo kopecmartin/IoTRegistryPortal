@@ -11,7 +11,7 @@ export default class Loading extends React.Component {
         let toRender = (
             <div className="table-responsive" style={{clear: "both", margin: "auto"}}>
                 <p style={{textAlign: "center", marginTop: 100}}>
-                    <ImageLoader src={require("../../../public/img/loading.gif")}/>
+                    <ImageLoader src={("../../../public/img/loading.gif")}/>
                 </p>
             </div>
         );

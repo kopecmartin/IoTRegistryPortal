@@ -1,25 +1,26 @@
-import API from './API_addresses.js';
+import API from './API_types.js';
 import cookie from 'react-cookie';
 import request from 'superagent';
 
 
 /**
  * Sends data to a server as a post request.
- * @param url - URL address of a server/API
+ * @param API_TYPE - API_TYPE key in string
  * @param data - needed data to get transaction processed such as token, email, ...
  * @returns {Promise}
  */
-export const sendPostRequest = function (url, data) {
+export const sendPostRequest = function (API_TYPE, data) {
     //data['token'] = cookie.load('token');
 
     return new Promise((resolve, reject) => {
         request
-            .post(API[url])
+            .post(API[API_TYPE])
             .set('Accept', 'application/json')
             .send(data)
             .end((err, res) => {
-                console.log(res);  //debug
+                console.log("debug", res);  //debug
                 if (err != null || !res.ok) {
+                    console.log(err);
                     console.log("error in request");
                 } else {
                     resolve(res);
@@ -31,16 +32,16 @@ export const sendPostRequest = function (url, data) {
 
 /**
  * Sends data to a server as a put request.
- * @param url - URL address of a server/API
+ * @param API_TYPE - API_TYPE key in string
  * @param data - needed data to get transaction processed such as token, email, ...
  * @returns {Promise}
  */
-export const sendPutRequest = function (url, data) {
+export const sendPutRequest = function (API_TYPE, data) {
     //data['token'] = cookie.load('token');
 
     return new Promise((resolve, reject) => {
         request
-            .put(API[url])
+            .put(API[API_TYPE])
             .set('Accept', 'application/json')
             .send(data)
             .end((err, res) => {
@@ -57,16 +58,16 @@ export const sendPutRequest = function (url, data) {
 
 /**
  * Sends data to a server as a delete request.
- * @param url - URL address of a server/API
+ * @param API_TYPE - API_TYPE key in string
  * @param data - needed data to get transaction processed such as token, email, ...
  * @returns {Promise}
  */
-export const sendDeleteRequest = function (url, data) {
+export const sendDeleteRequest = function (API_TYPE, data) {
     //data['token'] = cookie.load('token');
 
     return new Promise((resolve, reject) => {
         request
-            .del(API[url])
+            .del(API[API_TYPE])
             .set('Accept', 'application/json')
             .send(data)
             .end((err, res) => {

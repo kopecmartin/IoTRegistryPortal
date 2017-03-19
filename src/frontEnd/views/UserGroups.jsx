@@ -1,8 +1,11 @@
 import React from 'react';
-import UpperToolbar from '../components/UpperToolbar.jsx';
+
 import List from '../components/ItemList/List.jsx';
-import PopupAddNew from '../components/PopupAddNew.jsx';
+import Loading from '../components/Loading.jsx';
 import NewGroupForm from '../components/Forms/AddNewUserGroup.jsx';
+import PopupAddNew from '../components/PopupAddNew.jsx';
+import {sendPostRequest} from '../helpers/HTTP_requests.js';
+import UpperToolbar from '../components/UpperToolbar.jsx';
 
 
 export default class UserGroups extends React.Component {
@@ -12,7 +15,38 @@ export default class UserGroups extends React.Component {
 
         this.state = {
             addNewItemClicked: false,
+            pendingOwnGroups: false,
+            pendingOtherGroups: false,
+            ownGroupsData: [],
+            memberInGroupsData: [],
         }
+    }
+
+    componentDidMount() {
+        this.fetchOwnGroupsData();
+        this.fetchMemberInGroupsData();
+    }
+
+    fetchOwnGroupsData() {
+        this.setState({pendingOwnGroups: true});
+        //TODO obtain user's email from cookies/redux
+        sendPostRequest("GET_GROUPS_BY_OWNERSHIP", {email: "testUser2@mail.com"}).then((data) => {
+            //data = this.state.tableHeaders.concat(data);
+            console.log("owner", JSON.parse(data.text));
+            this.setState({pendingOwnGroups: false, ownGroupsData: JSON.parse(data.text)});
+        }, (err) => {
+
+        });
+    }
+
+    fetchMemberInGroupsData() {
+        this.setState({pendingOtherGroups: true});
+        sendPostRequest("GET_GROUPS_BY_MEMBERSHIP", {email: "testUser2@mail.com"}).then((data) => {
+            console.log("member", JSON.parse(data.text));
+            this.setState({pendingOtherGroups: false, memberInGroupsData: JSON.parse(data.text)});
+        }, (err) => {
+
+        });
     }
 
     addNewItemTrigger() {
@@ -25,23 +59,6 @@ export default class UserGroups extends React.Component {
             paddingTop: 20,
         };
 
-        const data = [
-            {
-                name: "TestGroup",
-                description: "Description",
-                additionalInfoLst: [
-                    {
-                        name: "Members",
-                        number: "8"
-                    },
-                    {
-                        name: "Subgroups",
-                        number: "0"
-                    }
-                ]
-            },
-        ];
-
         return (
             <div>
                 <h1>User Groups</h1>
@@ -49,9 +66,9 @@ export default class UserGroups extends React.Component {
 
                 <div style={style}>
                     <h2>My Groups</h2>
-                    <List data={data}/>
+                    {this.state.pendingOwnGroups ? <Loading/> : <List data={this.state.ownGroupsData}/>}
                     <h2>Member in</h2>
-                    <List data={data}/>
+                    {this.state.pendingOtherGroups ? <Loading/> : <List data={this.state.memberInGroupsData}/>}
                 </div>
 
                 {
