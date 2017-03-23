@@ -8,48 +8,109 @@ let conf = require('../../config/config.js');
 let DeviceGroup = require('./../../models/deviceGroup.js');
 
 
-it('create a new device group', function (done) {
-    let body = {
-        email: 'test@test.com',
-        name: 'testName',
-    };
-
-    requests.postRequest('/deviceGroup', body, 201).then((res) => {
-    }).then(done, done);
-});
-
-
-it('create a new group with existing name - error', function (done) {
-    let body = {
-        email: 'test@test.com',
-        name: 'testName',
-    };
-
-    requests.postRequest('/deviceGroup', body, 400).then((res) => {
-    }).then(done, done);
-});
-
-
-it('create a new group without required email - error', function (done) {
+describe('Create', function () {
 
     let body = {
-        name: 'testName',
+        email: "test@test.com",
+        password: "secret"
     };
 
-    requests.postRequest('/deviceGroup', body, 500).then((res) => {
-    }).then(done, done);
+    let token = "";
+
+    before(function (done) {
+        request(conf.server.url)
+            .post('/register')
+            .send(body)
+            .end(function (err, res) {
+                if (err) {
+                    throw err;
+                }
+                request(conf.server.url)
+                    .post('/login')
+                    .send(body)
+                    .end(function (err, res) {
+                        if (err) {
+                            throw err;
+                        }
+                        token = res.body.token;
+                        done();
+                    });
+            });
+    });
+
+
+    it('create a new device group', function (done) {
+        let body = {
+            token: token,
+            name: 'testName',
+        };
+
+        requests.postRequest('/deviceGroup', body, 201).then((res) => {
+        }).then(done, done);
+    });
+
+
+    it('create a new group with existing name - error', function (done) {
+        let body = {
+            token: token,
+            name: 'testName',
+        };
+
+        requests.postRequest('/deviceGroup', body, 400).then((res) => {
+        }).then(done, done);
+    });
+
+
+    it('create a new group without required token - error', function (done) {
+
+        let body = {
+            name: 'testName',
+        };
+
+        requests.postRequest('/deviceGroup', body, 403).then((res) => {
+        }).then(done, done);
+    });
 });
 
 
 describe('Update - delete - find', function () {
 
-    let data = DeviceGroup({
+    let data = {
         email: 'testUD@test.com',
         name: 'testNameUpdate',
-    });
+    };
+
     let id = 0;
+    let token = "";
+
+
+    before(function (done) {
+        let user = {
+            email: 'testUD@test.com',
+            password: "secret"
+        };
+        request(conf.server.url)
+            .post('/register')
+            .send(user)
+            .end(function (err, res) {
+                if (err) {
+                    throw err;
+                }
+                request(conf.server.url)
+                    .post('/login')
+                    .send(user)
+                    .end(function (err, res) {
+                        if (err) {
+                            throw err;
+                        }
+                        token = res.body.token;
+                        done();
+                    });
+            });
+    });
 
     beforeEach(function (done) {
+        data["token"] = token;
         request(conf.server.url)
             .post('/deviceGroup')
             .send(data)
@@ -72,7 +133,7 @@ describe('Update - delete - find', function () {
     it("update group's name", function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: id,
             name: "newName"
         };
@@ -87,8 +148,8 @@ describe('Update - delete - find', function () {
     it("update group which doesn't exist - error", function (done) {
 
         let body = {
-            email: data.email,
-            id:  mongoose.Types.ObjectId(),
+            token: token,
+            id: mongoose.Types.ObjectId(),
             name: "newName"
         };
 
@@ -99,8 +160,8 @@ describe('Update - delete - find', function () {
 
     it("update group by not the owner - error", function (done) {
         let body = {
-            email: "doesNotExist@mail.com",
-            id:  id,
+            token: "doesNotExistToken",
+            id: id,
             name: "newName"
         };
 
@@ -111,12 +172,12 @@ describe('Update - delete - find', function () {
 
     it('delete the group', function (done) {
         let body = {
-            email: data.email,
+            token: token,
             id: id
         };
 
         requests.delRequest('/deviceGroup', body, 200).then((res) => {
-            res.body.email.should.be.equal(body.email);
+            res.body.email.should.be.equal(data.email);
             res.body._id.should.be.equal(body.id);
         }).then(done, done);
     });
@@ -124,8 +185,8 @@ describe('Update - delete - find', function () {
 
     it('delete group which does not exist - error ', function (done) {
         let body = {
-            email: data.email,
-            id:  mongoose.Types.ObjectId()
+            token: token,
+            id: mongoose.Types.ObjectId()
         };
 
         requests.delRequest('/deviceGroup', body, 404).then((res) => {
@@ -135,7 +196,7 @@ describe('Update - delete - find', function () {
 
     it('delete group by not the owner - error', function (done) {
         let body = {
-            email: "doesNotExist@mail.com",
+            token: "doesNotExistToken",
             id: id
         };
 
@@ -146,7 +207,7 @@ describe('Update - delete - find', function () {
 
     it('get device groups', function (done) {
         let body = {
-            email: data.email
+            token: token,
         };
 
         requests.postRequest('/getDeviceGroups', body, 200).then((res) => {
@@ -156,14 +217,19 @@ describe('Update - delete - find', function () {
         }).then(done, done);
     });
 
+
     it('get device groups - empty list', function (done) {
         let body = {
-            email: "doesNotExist@mail.com"
+            token: token,
         };
 
-        requests.postRequest('/getDeviceGroups', body, 200).then((res) => {
-            res.body.length.should.be.equal(0);
-        }).then(done, done);
+        // delete existed group, so that there is no need to create another user with no
+        // groups to test this functionality
+        DeviceGroup.remove({email: data.email}, function () {
+            requests.postRequest('/getDeviceGroups', body, 200).then((res) => {
+                res.body.length.should.be.equal(0);
+            }).then(done, done);
+        });
     });
 });
 

@@ -1,6 +1,8 @@
+import cookie from 'react-cookie';
 import LoginPageComponent from '../components/LoginPage/LoginPageComponent.jsx';
 import React, { PropTypes } from 'react';
 import { hashHistory } from 'react-router';
+import {sendPostRequest} from '../helpers/HTTP_requests.js';
 
 import { connect } from 'react-redux'
 let actions = require('./../actions/actions.js');
@@ -15,9 +17,17 @@ class LoginPage extends React.Component {
     login(data) {
         console.log("login");
         console.log(data);
-        //console.log(changeSite);
-        this.props.changeSite("/portal/dashboard");
-        hashHistory.push('/portal/dashboard');
+        sendPostRequest("LOGIN", data).then((data) => {
+            //data = this.state.tableHeaders.concat(data);
+            console.log("loggedIn", JSON.parse(data.text));
+            cookie.save("token", JSON.parse(data.text).token);
+            this.props.changeSite("/portal/dashboard");
+            hashHistory.push('/portal/dashboard');
+        }, (err) => {
+            console.log("access denied", err);
+
+            //TODO show error
+        });
     }
 
     register(data) {

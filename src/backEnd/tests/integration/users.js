@@ -5,7 +5,7 @@ let request = require('supertest');
 let requests = require('../API_test_requests.js');
 
 let conf = require('../../config/config.js');
-let Device = require('./../../models/deviceGroup.js');
+let User = require('./../../models/user.js');
 
 
 it('register a new user', function (done) {
@@ -35,7 +35,7 @@ it('register a new user with the same email', function (done) {
 describe('Login', function () {
 
     let data = {
-        email: "test2@test.mail",
+        email: "test22@test.mail",
         password: "password",
     };
 
@@ -52,7 +52,7 @@ describe('Login', function () {
     });
 
     afterEach(function (done) {
-        Device.remove({email: data.email}, function () {
+        User.remove({email: data.email}, function () {
             done();
         });
     });
@@ -112,15 +112,18 @@ describe('Login', function () {
             age: newInfo.age,
         };
 
-        requests.putRequest('/updateUser', body, 200).then((res) => {
-            res.body.email.should.be.equal(data.email);
-            res.body.password.should.be.equal(newInfo.password);
-            res.body.name.should.be.equal(newInfo.name);
-            res.body.meta.firstName.should.be.equal(newInfo.firstName);
-            res.body.meta.lastName.should.be.equal(newInfo.lastName);
-            res.body.meta.age.should.be.equal(newInfo.age);
-            res.body.updated_at.should.not.equal(res.body.created_at);
-        }).then(done, done);
+        requests.postRequest('/login', {email: data.email, password: data.password}, 200).then((res) => {
+            body['token'] = res.body.token;
+            requests.putRequest('/updateUser', body, 200).then((res) => {
+                res.body.email.should.be.equal(data.email);
+                res.body.password.should.be.equal(newInfo.password);
+                res.body.name.should.be.equal(newInfo.name);
+                res.body.meta.firstName.should.be.equal(newInfo.firstName);
+                res.body.meta.lastName.should.be.equal(newInfo.lastName);
+                res.body.meta.age.should.be.equal(newInfo.age);
+                res.body.updated_at.should.not.equal(res.body.created_at);
+            }).then(done, done);
+        });
     });
 
 });

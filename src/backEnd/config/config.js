@@ -1,7 +1,8 @@
 
 module.exports = {
     "database": {
-        "url": "mongodb://localhost:33333"
+        "url": "mongodb://localhost:33333",
+        "tokenExpireIn": 30,  // in minutes
     },
     "server": {
         "port": 3000,

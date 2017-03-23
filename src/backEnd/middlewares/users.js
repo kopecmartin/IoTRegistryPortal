@@ -1,10 +1,11 @@
-let getTranslation =require('../helpers/translations.js');
+let authenticateUser = require('../helpers/authenticateUser.js');
+let crypto = require("crypto");
+let getTranslation = require('../helpers/translations.js');
 let jwt = require('jsonwebtoken');
 let messageTypes = require('../helpers/messageTypes.js');
 let moment = require('moment');
+let Token = require('../models/token.js');
 let User = require('../models/user.js');
-
-// TODO in each API request check if token is valid and if the user has rights to get an response
 
 
 module.exports = function (app, _) {
@@ -26,7 +27,7 @@ module.exports = function (app, _) {
             }
             else {
                 // create a new user
-                // TODO create a key for the user, which is gonna be used for hashing tokens
+                // TODO create a key for the user, which is gonna be used for hashing passwords
                 // TODO encrypt user's password
                 // TODO if time left, add support for changing this key in user's settings
                 let newUser = new User({
@@ -63,26 +64,40 @@ module.exports = function (app, _) {
             }
             else if (!user) {
                 res.status(403).json({   // forbidden
-                    msg:getTranslation(messageTypes.NAME_PASSWORD_INCORRECT)
+                    msg: getTranslation(messageTypes.NAME_PASSWORD_INCORRECT)
                 });
             }
             else {
                 // then check the password
                 // TODO decrypt password first
-                if (user.password != body.password) {
+                if (user.email !== body.email || user.password !== body.password) {
                     res.status(403).json({   // forbidden
                         msg: getTranslation(messageTypes.NAME_PASSWORD_INCORRECT)
                     });
                 }
                 else {
-                    // send a token and other information (settings, name of the user, ...)
-                    let token = jwt.sign(user, app.get('superSecret'), {
-                        expiresIn: 1800  // in seconds => expires in 30 minutes
-                    });
-                    res.status(200).json({
+                    let token = crypto.randomBytes(256).toString('hex');
+                    let newToken = new Token({
+                        email: user.email,
                         token: token,
-                        data: "some data",
                     });
+
+                    newToken.save(function (err) {
+                        if (err) {
+                            console.log(err);
+                            res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                        } else {
+                            res.status(200).json({
+                                token: token,
+                                data: "some data",
+                            });
+                        }
+                    });
+                    // send a token and other information (settings, name of the user, ...)
+                    /*let token = jwt.sign(user, app.get('superSecret'), {
+                     expiresIn: 1800  // in seconds => expires in 30 minutes
+                     });*/
+
                 }
             }
         });
@@ -124,7 +139,17 @@ module.exports = function (app, _) {
 
     app.post('/logout', function (req, res) {
 
-        // destroy token TODO
+        let body = _.pick(req.body, 'token');
+        console.log("token", body);
+
+        authenticateUser(body.token).then((email) => {
+            Token.remove({token: body.token}, function (err) {
+                res.status(200).json({msg: getTranslation(messageTypes.USER_LOGOUT)});
+            });
+        }, (errCode) => {
+            res.status(403).json({});
+        });
+
     });
 
 
@@ -136,52 +161,56 @@ module.exports = function (app, _) {
     app.put('/updateUser', function (req, res) {
 
         // retrieve information
-        let body = _.pick(req.body, 'email', 'password', 'name', 'firstName', 'lastName', 'age', 'gender');
+        let body = _.pick(req.body, 'token', 'password', 'name', 'firstName', 'lastName', 'age', 'gender');
 
-        User.findOne({email: body.email}, function (err, user) {
-            if (err) {
-                res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
-            }
-            else if (!user) {
-                res.status(404).json({msg: getTranslation(messageTypes.USER_NOT_FOUND)});
-            }
-            // TODO verify token ...
-            else {
-                //user.email = body.email;  // TODO support a change of email??
-                if (body.name) {
-                    user.name = body.name;
+        authenticateUser(body.token).then((email) => {
+
+            User.findOne({email: email}, function (err, user) {
+                if (err) {
+                    res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                 }
-                if (body.password) {
-                    user.password = body.password;  // TODO hash passwords
-                }
-                if (body.firstName) {
-                    user.meta.firstName = body.firstName;
-                }
-                if (body.lastName) {
-                    user.meta.lastName = body.lastName;
-                }
-                if (body.age) {
-                    user.meta.age = body.age;
-                }
-                if (body.gender) {
-                    user.meta.gender = body.gender;
-                }
-                // if something was updated
-                if (body.name || body.password || body.firstName || body.lastName || body.age || body.gender) {
-                    user.updated_at = new Date();
-                    user.save(function (err) {
-                        if (err) {
-                            res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
-                        } else {
-                            res.status(200).json(user); //return the updated user object
-                        }
-                    });
+                else if (!user) {
+                    res.status(404).json({msg: getTranslation(messageTypes.USER_NOT_FOUND)});
                 }
                 else {
-                    res.status(200).json({msg: getTranslation(messageTypes.USER_ALREADY_UPDATED)});
+                    //user.email = body.email;  // TODO support a change of email??
+                    if (body.name) {
+                        user.name = body.name;
+                    }
+                    if (body.password) {
+                        user.password = body.password;  // TODO hash passwords
+                    }
+                    if (body.firstName) {
+                        user.meta.firstName = body.firstName;
+                    }
+                    if (body.lastName) {
+                        user.meta.lastName = body.lastName;
+                    }
+                    if (body.age) {
+                        user.meta.age = body.age;
+                    }
+                    if (body.gender) {
+                        user.meta.gender = body.gender;
+                    }
+                    // if something was updated
+                    if (body.name || body.password || body.firstName || body.lastName || body.age || body.gender) {
+                        user.updated_at = new Date();
+                        user.save(function (err) {
+                            if (err) {
+                                res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                            } else {
+                                res.status(200).json(user); //return the updated user object
+                            }
+                        });
+                    }
+                    else {
+                        res.status(200).json({msg: getTranslation(messageTypes.USER_ALREADY_UPDATED)});
+                    }
                 }
-            }
-        })
+            });
+        }, (errCode) => {
+            res.status(403).json({});
+        });
     });
 
 

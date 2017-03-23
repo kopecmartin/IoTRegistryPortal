@@ -7,44 +7,144 @@ let requests = require('../API_test_requests.js');
 let conf = require('../../config/config.js');
 let User = require('../../models/user');
 let UserGroup = require('./../../models/userGroup.js');
-
-
-it('create user group', function (done) {
-    let body = {
-        email: "test@test.mail",
-        name: "GroupName",
-    };
-
-    requests.postRequest('/userGroup', body, 201).then((res) => {
-        res.body.email.should.be.equal(body.email);
-        res.body.name.should.be.equal(body.name);
-    }).then(done, done);
-});
+let Token = require('./../../models/token.js');
 
 
 describe('update - delete - find', function () {
 
     let data = {
         email: "test2@test.mail",
-        name: "GroupName",
+        password: 'secret',
     };
-    let id = 0;
+    let token = "";
 
-    beforeEach(function (done) {
+    before(function (done) {
         request(conf.server.url)
-            .post('/userGroup')
+            .post('/register')
             .send(data)
             .end(function (err, res) {
                 if (err) {
                     throw err;
                 }
-                id = res.body._id;
-                done();
+                request(conf.server.url)
+                    .post('/login')
+                    .send(data)
+                    .end(function (err, res) {
+                        if (err) {
+                            throw err;
+                        }
+                        token = res.body.token;
+                        done();
+                    });
             });
     });
 
+    after(function (done) {
+        User.remove({email: data.email}, function () {
+            Token.remove({email: data.email}, function () {
+                done();
+            });
+        });
+    });
+
+    it('create user group', function (done) {
+        let body = {
+            token: token,
+            name: "GroupName",
+        };
+
+        requests.postRequest('/userGroup', body, 201).then((res) => {
+            res.body.email.should.be.equal(data.email);
+            res.body.name.should.be.equal(body.name);
+        }).then(done, done);
+    });
+});
+
+
+describe('update - delete - find', function () {
+
+    let notOwnerNoGroupsUser = {
+        email: "userNotOwner@mail.com",
+        password: "secret"
+    };
+
+    let data = {
+        email: "test2@test.mail",
+        name: "GroupName",
+    };
+
+    let id = 0;
+    let tokenNotOwner = "";
+    let token = "";
+
+    before(function (done) {
+        request(conf.server.url)
+            .post('/register')
+            .send(notOwnerNoGroupsUser)
+            .end(function (err, res) {
+                if (err) {
+                    throw err;
+                }
+                request(conf.server.url)
+                    .post('/login')
+                    .send(notOwnerNoGroupsUser)
+                    .end(function (err, res) {
+                        if (err) {
+                            throw err;
+                        }
+                        tokenNotOwner = res.body.token;
+                        done();
+                    });
+            });
+    });
+
+    beforeEach(function (done) {
+        data['password'] = "secret";
+
+        request(conf.server.url)
+            .post('/register')
+            .send(data)
+            .end(function (err, res) {
+                if (err) {
+                    throw err;
+                }
+                request(conf.server.url)
+                    .post('/login')
+                    .send(data)
+                    .end(function (err, res) {
+                        if (err) {
+                            throw err;
+                        }
+                        token = res.body.token;
+                        data['token'] = token;
+
+                        request(conf.server.url)
+                            .post('/userGroup')
+                            .send(data)
+                            .end(function (err, res) {
+                                if (err) {
+                                    throw err;
+                                }
+                                id = res.body._id;
+                                done();
+                            });
+                    });
+            });
+    });
+
+
     afterEach(function (done) {
         UserGroup.remove({email: data.email}, function () {
+            User.remove({email: data.email}, function () {
+                Token.remove({email: data.email}, function () {
+                    done();
+                });
+            });
+        });
+    });
+
+    after(function (done) {
+        User.remove({email: notOwnerNoGroupsUser.email}, function () {
             done();
         });
     });
@@ -52,6 +152,7 @@ describe('update - delete - find', function () {
 
     it('create user group, the group already exists', function (done) {
 
+        data['token'] = token;
         requests.postRequest('/userGroup', data, 400).then((res) => {
         }).then(done, done);
     });
@@ -67,6 +168,7 @@ describe('update - delete - find', function () {
         };
 
         let body = {
+            token: token,
             email: data.email,
             id: id,
             name: newInfo.name,
@@ -88,7 +190,7 @@ describe('update - delete - find', function () {
     it('try to update group with the same information', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: id
         };
 
@@ -102,7 +204,7 @@ describe('update - delete - find', function () {
     it('update group which is not in the database', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: "doesNotExist"
         };
 
@@ -113,7 +215,7 @@ describe('update - delete - find', function () {
     it('update group by not the owner', function (done) {
 
         let body = {
-            email: "notOwner@email.com",
+            token: tokenNotOwner,
             id: id
         };
 
@@ -125,7 +227,7 @@ describe('update - delete - find', function () {
     it('delete group', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: id
         };
 
@@ -139,7 +241,7 @@ describe('update - delete - find', function () {
     it('delete group which is not in the database', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: "doesNotExist"
         };
 
@@ -151,7 +253,7 @@ describe('update - delete - find', function () {
     it('delete group by not the owner', function (done) {
 
         let body = {
-            email: "notOwner@email.com",
+            token: tokenNotOwner,
             id: id
         };
 
@@ -163,7 +265,7 @@ describe('update - delete - find', function () {
     it('get groups by ownership', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
         };
 
         requests.postRequest('/getGroupsByOwnership', body, 200).then((res) => {
@@ -178,7 +280,7 @@ describe('update - delete - find', function () {
     it('get groups by ownership, no groups', function (done) {
 
         let body = {
-            email: "doNotHaveGroups@mail.com",
+            token: tokenNotOwner,
         };
 
         requests.postRequest('/getGroupsByOwnership', body, 200).then((res) => {
@@ -197,12 +299,16 @@ describe('--- Group Members ---', function () {
 
     let data = {
         email: "test2@test.mail",
+        password: "secret",
         name: "GroupNameMembersTesting",
     };
+
     let id = 0;
+    let token = "";
+    let tokenNewMember = "";
 
     beforeEach(function (done) {
-
+        // register the newMember
         request(conf.server.url)
             .post('/register')
             .send(newMember)
@@ -211,15 +317,47 @@ describe('--- Group Members ---', function () {
                     throw err;
                 }
                 else {
+                    // register a test user
                     request(conf.server.url)
-                        .post('/userGroup')
+                        .post('/register')
                         .send(data)
                         .end(function (err, res) {
                             if (err) {
                                 throw err;
                             }
-                            id = res.body._id;
-                            done();
+                            // login the member
+                            request(conf.server.url)
+                                .post('/login')
+                                .send(newMember)
+                                .end(function (err, res) {
+                                    if (err) {
+                                        throw err;
+                                    }
+                                    tokenNewMember = res.body.token;
+                                    // login the test user
+                                    request(conf.server.url)
+                                        .post('/login')
+                                        .send(data)
+                                        .end(function (err, res) {
+                                            if (err) {
+                                                throw err;
+                                            }
+                                            // create a new group as the test user
+                                            token = res.body.token;
+                                            data['token'] = token;
+                                            request(conf.server.url)
+                                                .post('/userGroup')
+                                                .send(data)
+                                                .end(function (err, res) {
+                                                    if (err) {
+                                                        throw err;
+                                                    }
+                                                    id = res.body._id;
+                                                    done();
+                                                });
+                                        });
+                                });
+
                         });
                 }
             });
@@ -227,18 +365,19 @@ describe('--- Group Members ---', function () {
 
     afterEach(function (done) {
         UserGroup.remove({email: data.email}, function () {
-            User.remove({email: newMember.email}, function () {
-                done();
+            User.remove({email: {$in: [data.email, newMember.email]}}, function () {
+                Token.remove({email: {$in: [data.email, newMember.email]}}, function () {
+                    done();
+                });
             });
         });
-
     });
 
 
     it('add a new user group member', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: id,
             memberEmail: newMember.email,
         };
@@ -253,7 +392,7 @@ describe('--- Group Members ---', function () {
     it('add a new user group member, user is already a member', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: id,
             memberEmail: newMember.email,
         };
@@ -268,7 +407,7 @@ describe('--- Group Members ---', function () {
     it('add a new user group member not by the owner', function (done) {
 
         let body = {
-            email: "notOwner@mail.com",
+            token: "notOwner@mail.com",
             id: id,
             memberEmail: newMember.email,
         };
@@ -281,7 +420,7 @@ describe('--- Group Members ---', function () {
     it('add a new user group member, group does not exist', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: "doesNotExist",
             memberEmail: newMember.email,
         };
@@ -294,7 +433,7 @@ describe('--- Group Members ---', function () {
     it('add a new user group member, new member is not registered', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: id,
             memberEmail: "notRegistered@mail.com",
         };
@@ -307,7 +446,7 @@ describe('--- Group Members ---', function () {
     it('delete group member', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: id,
             memberEmail: newMember.email,
         };
@@ -324,7 +463,7 @@ describe('--- Group Members ---', function () {
     it('delete group member for not the group owner', function (done) {
 
         let body = {
-            email: "notOwner@mail.com",
+            token: tokenNewMember,
             id: id,
             memberEmail: newMember.email,
         };
@@ -337,7 +476,7 @@ describe('--- Group Members ---', function () {
     it('delete group member, group does not exist', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: "doesNotExist",
             memberEmail: newMember.email,
         };
@@ -350,13 +489,13 @@ describe('--- Group Members ---', function () {
     it('get groups by membership', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: id,
             memberEmail: newMember.email,
         };
 
         let body2 = {
-            email: newMember.email,
+            token: tokenNewMember
         };
 
         // create a member first
@@ -373,7 +512,7 @@ describe('--- Group Members ---', function () {
     it('get groups by membership, member of none groups', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
         };
 
         requests.postRequest('/getGroupsByMembership', body, 200).then((res) => {
@@ -385,13 +524,13 @@ describe('--- Group Members ---', function () {
     it('get members of a group for the group owner', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: id,
             memberEmail: newMember.email,
         };
 
         let body2 = {
-            email: newMember.email,
+            token: token,
             id: id,
         };
 
@@ -408,13 +547,13 @@ describe('--- Group Members ---', function () {
     it('get members of a group for a member', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: id,
             memberEmail: newMember.email,
         };
 
         let body2 = {
-            email: newMember.email,
+            token: tokenNewMember,
             id: id,
         };
 
@@ -431,7 +570,7 @@ describe('--- Group Members ---', function () {
     it('get members of a group for non-authorized person', function (done) {
 
         let body = {
-            email: "someone@mail.com",
+            token: "someone@mail.com",
             id: id,
         };
 
@@ -443,7 +582,7 @@ describe('--- Group Members ---', function () {
     it('get members of a group which does not exist', function (done) {
 
         let body = {
-            email: data.email,
+            token: token,
             id: "doesNotExist",
         };
 
@@ -452,10 +591,3 @@ describe('--- Group Members ---', function () {
     });
 
 });
-
-
-
-
-
-
-

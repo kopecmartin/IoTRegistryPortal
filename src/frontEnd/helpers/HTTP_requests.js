@@ -10,7 +10,7 @@ import request from 'superagent';
  * @returns {Promise}
  */
 export const sendPostRequest = function (API_TYPE, data) {
-    //data['token'] = cookie.load('token');
+    data['token'] = cookie.load('token');
 
     return new Promise((resolve, reject) => {
         request
@@ -19,7 +19,7 @@ export const sendPostRequest = function (API_TYPE, data) {
             .send(data)
             .end((err, res) => {
                 console.log("debug", res);  //debug
-                if (err != null || !res.ok) {
+                if (err !== null || !res.ok) {
                     console.log(err);
                     console.log("error in request");
                     reject(res);
@@ -38,7 +38,7 @@ export const sendPostRequest = function (API_TYPE, data) {
  * @returns {Promise}
  */
 export const sendPutRequest = function (API_TYPE, data) {
-    //data['token'] = cookie.load('token');
+    data['token'] = cookie.load('token');
 
     return new Promise((resolve, reject) => {
         request
@@ -47,7 +47,7 @@ export const sendPutRequest = function (API_TYPE, data) {
             .send(data)
             .end((err, res) => {
                 console.log(res);  //debug
-                if (err != null || !res.ok) {
+                if (err !== null || !res.ok) {
                     console.log("error in request");
                     reject(res);
                 } else {
@@ -65,7 +65,7 @@ export const sendPutRequest = function (API_TYPE, data) {
  * @returns {Promise}
  */
 export const sendDeleteRequest = function (API_TYPE, data) {
-    //data['token'] = cookie.load('token');
+    data['token'] = cookie.load('token');
 
     return new Promise((resolve, reject) => {
         request
@@ -74,7 +74,7 @@ export const sendDeleteRequest = function (API_TYPE, data) {
             .send(data)
             .end((err, res) => {
                 console.log(res);  //debug
-                if (err != null || !res.ok) {
+                if (err !== null || !res.ok) {
                     console.log("error in request");
                     reject(res);
                 } else {

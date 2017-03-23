@@ -22,6 +22,7 @@ const MessagesEN = {
     INTERNAL_DB_ERROR: "Internal database error",
     NAME_PASSWORD_INCORRECT: "Name or password is incorrect!",
     USER_ALREADY_REGISTERED: "This email is already registered. Use a different email.",
+    USER_LOGOUT: "The user has been logged out.",
 
     GROUP_ALREADY_EXISTS: "A group with the name already exists!",
     GROUP_NOT_FOUND: "No such a group!",
