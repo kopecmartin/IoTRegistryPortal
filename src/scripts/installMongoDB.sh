@@ -14,7 +14,7 @@ else
 fi
 
 
-echo "[script] Trying update and install mongoDB"
+echo "[script] Trying to update and install mongoDB"
 sudo yum -y update
 
 # install mongoDB
@@ -27,4 +27,4 @@ sudo systemctl start mongod
 echo "[script] Enabling mongod on startup"
 sudo systemctl enable mongod
 
-echo "\n[script] By default mongoDB is running on port 27017\n"
+echo "[script] By default mongoDB is running on port 27017"

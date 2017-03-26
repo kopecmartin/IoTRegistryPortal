@@ -10,7 +10,7 @@ mongoose.connect("mongodb://localhost:33333");
 let syncCounter = 0;
 
 const exit = function () {
-    if (syncCounter == 10) {
+    if (syncCounter === 10) {
         console.log("Database was filled by data successfully!");
         mongoose.connection.close()
     }

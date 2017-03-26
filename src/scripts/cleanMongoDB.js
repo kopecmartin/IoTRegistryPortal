@@ -4,6 +4,7 @@ let DeviceGroup = require('../backEnd/models/deviceGroup.js');
 let User = require('../backEnd/models/user.js');
 let UserGroup = require('../backEnd/models/userGroup.js');
 let UserGroupMem = require('../backEnd/models/userGroupMem.js');
+let Token = require('../backEnd/models/token.js');
 
 
 // Connect to the db
@@ -14,8 +15,10 @@ Device.remove({}, function () {
         User.remove({}, function () {
             UserGroup.remove({}, function () {
                 UserGroupMem.remove({}, function () {
-                    console.log("The database was cleaned successfully!");
-                    mongoose.connection.close();
+                    Token.remove({}, function () {
+                        console.log("The database was cleaned successfully!");
+                        mongoose.connection.close();
+                    });
                 });
             });
         })
