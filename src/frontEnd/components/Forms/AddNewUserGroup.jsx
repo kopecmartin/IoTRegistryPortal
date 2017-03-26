@@ -34,7 +34,7 @@ export default class UserGroups extends React.Component {
             this.setState(state);
             return false;
         }
-        if (this.state[name] != "" && this.state[name + "Required"] != null) {
+        if (this.state[name] !== "" && this.state[name + "Required"] !== null) {
             state[name + "Required"] = null;
             this.setState(state);
         }
@@ -42,15 +42,13 @@ export default class UserGroups extends React.Component {
     }
 
     handlerSubmitBtn() {
-        //TODO obtain user's email from cookies/redux
         let data = {
-            email: "testUser2@mail.com",
             name: this.state.name,
             description: this.state.description,
             permissions: 666,// this.state.permissions,
             //path: this.state.path,
         };
-        // TODO add email of the user
+
         // TODO call backend
         this.setState({pending: true});
         console.log("submitting", data);

@@ -1,5 +1,6 @@
 import API from './API_types.js';
 import cookie from 'react-cookie';
+import { hashHistory } from 'react-router';
 import request from 'superagent';
 
 
@@ -20,6 +21,12 @@ export const sendPostRequest = function (API_TYPE, data) {
             .end((err, res) => {
                 console.log("debug", res);  //debug
                 if (err !== null || !res.ok) {
+                    if (res.status === 403) {  // unauthorized
+                        cookie.remove("token");
+                        //TODO use redux to create a popup window with information
+                        //TODO what happened and redirect to the welcome page after that
+                        hashHistory.push('/');  // redirect to the welcome page
+                    }
                     console.log(err);
                     console.log("error in request");
                     reject(res);

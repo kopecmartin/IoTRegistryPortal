@@ -19,9 +19,6 @@ app.use(cors());
 // use morgan for request debug output
 app.use(morgan('dev'));
 
-// set secret variable used to create tokens
-app.set('superSecret', 'too_secret!');  // TODO use users' keys
-
 require('./backEnd/middlewares/devices.js')(app, _);
 require('./backEnd/middlewares/deviceGroups.js')(app, _);
 require('./backEnd/middlewares/users.js')(app, _);

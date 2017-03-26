@@ -118,25 +118,6 @@ module.exports = function (app, _) {
 
     });
 
-
-    app.post('/auth', function (req, res) {
-
-        let body = _.pick(req.body, 'token');
-        // verifies secret and checks exp
-        // TODO this command just searches for a token, doesn't matter for which user???
-        // TODO use as the secret key, user's key, which was generated when the user has registered
-        jwt.verify(body.token, app.get('superSecret'), function (err, decoded) {
-            if (err) {
-                res.status(403).json({  // forbidden
-                    success: false,
-                    msg: 'Failed to authenticate token.',
-                });
-            } else {
-                res.json({success: true});
-            }
-        });
-    });
-
     app.post('/logout', function (req, res) {
 
         let body = _.pick(req.body, 'token');
