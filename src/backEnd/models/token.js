@@ -13,9 +13,16 @@ const minutesFromNow = function(){
 let tokenSchema = new mongoose.Schema({
     email: {type: String, required: true},
     token: {type: String, required: true, unique: true},
-    created_at: {type: Date, default: Date.now},
-    expire_at: {type: Date, default: minutesFromNow},
+    createdAt: {type: Date, default: Date.now},
+    expireAt: {type: Date, default: minutesFromNow},
 });
+
+
+tokenSchema.method('resetExpiration', function () {
+    this.expireAt = minutesFromNow();
+    return this;
+});
+
 
 //create a model
 let Token = mongoose.model('Token', tokenSchema);

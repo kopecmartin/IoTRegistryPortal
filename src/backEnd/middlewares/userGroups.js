@@ -359,7 +359,12 @@ module.exports = function (app, _) {
         });
     });
 
-    const getUserGroupMembers = function (body) {
+    /**
+     * Returns list of members of a user group
+     * @param body - object of required information (groupID, requester or owner email)
+     * @returns {Promise}
+     */
+    function getUserGroupMembers (body) {
 
         return new Promise((resolve, reject) => {
             // let's get a list of objects where emails belongs to members of the group specified by id

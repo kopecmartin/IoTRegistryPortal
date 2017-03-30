@@ -70,21 +70,21 @@ let testUserGroups = [
     {
         email: "testUser1@mail.com",
         name: "testGroup1",
-        description: "This group owns user1",
+        description: "This group is owned by user1",
         //permissions:
         path: "/",
     },
     {
         email: "testUser1@mail.com",
         name: "testGroup2",
-        description: "This group owns user1 as well",
+        description: "This group is owned by user1 as well",
         //permissions:
         path: "/",
     },
     {
         email: "testUser2@mail.com",
         name: "testGroup3",
-        description: "This group owns user2",
+        description: "This group is owned by user2",
         //permissions:
         path: "/",
     },
@@ -104,7 +104,7 @@ for (let group in testUserGroups) {
         console.log('Group ' + group.name + ' has been created!');
         syncCounter++;
 
-        if(group.name == "testGroup3") {
+        if(group.name === "testGroup3") {
             let userGroupMem = UserGroupMem({
                 email: "testUser1@mail.com",
                 groupID: group._id
@@ -139,7 +139,7 @@ for (let group in testUserGroups) {
             });
 
             // testGroup2 is gonna have two members, user2 and user3
-            if (group.name == "testGroup2") {
+            if (group.name === "testGroup2") {
                 let userGroupMem2 = UserGroupMem({
                     email: "testUser3@mail.com",
                     groupID: group._id

@@ -5,9 +5,9 @@ let request = require('supertest');
 let requests = require('../API_test_requests.js');
 
 let conf = require('../../config/config.js');
+let Token = require('./../../models/token.js');
 let User = require('../../models/user');
 let UserGroup = require('./../../models/userGroup.js');
-let Token = require('./../../models/token.js');
 
 
 describe('update - delete - find', function () {

@@ -1,7 +1,7 @@
 let authenticateUser = require('../helpers/authenticateUser.js');
+let config = require('../config/config.js');
 let crypto = require("crypto");
 let getTranslation = require('../helpers/translations.js');
-let jwt = require('jsonwebtoken');
 let messageTypes = require('../helpers/messageTypes.js');
 let moment = require('moment');
 let Token = require('../models/token.js');
@@ -13,7 +13,6 @@ module.exports = function (app, _) {
     app.post('/register', function (req, res) {
 
         let body = _.pick(req.body, 'email', 'password');
-        console.log("register", _.pick(req.body, 'email', 'password'));
 
         // try find the email, if found => error
         User.find({email: body.email}, function (err, user) {
@@ -76,7 +75,7 @@ module.exports = function (app, _) {
                     });
                 }
                 else {
-                    let token = crypto.randomBytes(256).toString('hex');
+                    let token = crypto.randomBytes(config.database.tokenLength).toString('hex');
                     let newToken = new Token({
                         email: user.email,
                         token: token,
@@ -93,11 +92,6 @@ module.exports = function (app, _) {
                             });
                         }
                     });
-                    // send a token and other information (settings, name of the user, ...)
-                    /*let token = jwt.sign(user, app.get('superSecret'), {
-                     expiresIn: 1800  // in seconds => expires in 30 minutes
-                     });*/
-
                 }
             }
         });

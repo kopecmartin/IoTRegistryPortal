@@ -66,6 +66,8 @@ describe('Login', function () {
 
         requests.postRequest('/login', body, 200).then((res) => {
             res.body.token.should.exist;
+            // reason why token length is doubled is explained in the config file
+            res.body.token.length.should.be.equal(conf.database.tokenLength*2);
         }).then(done, done);
     });
 
