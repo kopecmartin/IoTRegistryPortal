@@ -66,7 +66,7 @@ module.exports = function (app, _) {
         // TODO suggestion:  if so, use this user's address to the device object in MongoDB
         // TODO suggestion: databaseName could be an array - if it would be wanted, a device can publish values
         // TODO suggestion:  in multiple databases
-        let body = _.pick(req.body, 'id', 'APIKey', 'hostname', 'databaseName', 'ioFeatures');
+        let body = _.pick(req.body, 'id', 'APIKey', 'databaseName', 'ioFeatures');
 
         authDevice.authenticateAPIKey(body.APIKey).then((email) => {
 
@@ -79,7 +79,6 @@ module.exports = function (app, _) {
                 else if (device) {
                     // device already exists => update ioFeatures and create a new device token
                     device.ioFeatures = body.ioFeatures;
-                    // TODO: maybe update a hostname too?
                     device.updated_at = new Date();
 
                     device.save(function (err) {
@@ -107,7 +106,6 @@ module.exports = function (app, _) {
                                             let updatedDevice = {
                                                 token: newDeviceToken.token,
                                                 email: device.email,
-                                                hostname: device.hostname,
                                                 id: device.id,
                                                 ioFeatures: device.ioFeatures,
                                                 created_at: device.created_at,
@@ -127,7 +125,6 @@ module.exports = function (app, _) {
                     let newDevice = new Device({
                         id: body.id,
                         email: email,
-                        hostname: body.hostname,
                         ioFeatures: body.ioFeatures,  // it's actually database schema
                     });
 
@@ -288,27 +285,4 @@ module.exports = function (app, _) {
 
     });
 
-
-    // ------ communication with devices ------
-    // TODO implement it through sockets - socket.io
-
-
-    app.post('/sendValueToDevice', function (req, res) {
-
-    });
-
-
-    // used by devices
-    app.post('/publishValue', function (req, res) {
-
-        // retrieve information
-        let body = _.pick(req.body, 'token', 'id', 'ioFeatures');  // device will send json in ioFeatures
-
-        authDevice.authenticateDevice(body.token, body.id).then((id) => {
-            
-
-        }, (errCode) => {
-            res.status(403).json({});
-        });
-    });
 };

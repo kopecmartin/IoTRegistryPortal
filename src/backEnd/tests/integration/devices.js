@@ -19,7 +19,6 @@ describe('-- Create a new device --', function () {
     let data = {
         email: "testUser2@mail.com",
         password: "secret",
-        hostname: "testHost",
         databaseName: "testInfluxDB",
     };
     let deviceID = "4D5D7sdf546c5DFioD6sd54"; // TODO, for now, there is no validation for device's ID
@@ -95,7 +94,6 @@ describe('-- Create a new device --', function () {
         let body = {
             id: deviceID,
             email: data.email,
-            hostname: data.hostname,
             APIKey: APIKey,
             databaseName: data.databaseName,
             // TODO, for now ioFeatures are not exactly specified, but it's gonna be an object for sure
@@ -162,7 +160,6 @@ describe('Update - delete - find', function () {
     };
     let dev = {
         id: "FF5D7sdf546c5DFioD6sd55",
-        hostname: "testHost",
         ioFeatures: {
             input: "value",
             output: {
@@ -219,7 +216,6 @@ describe('Update - delete - find', function () {
                                             .send({
                                                 id: dev.id,
                                                 APIKey: APIKey,
-                                                hostname: dev.hostname,
                                                 databaseName: user.databaseName,
                                                 ioFeatures: dev.ioFeatures,
                                             })
