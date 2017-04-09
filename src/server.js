@@ -21,6 +21,7 @@ app.use(morgan('dev'));
 
 require('./backEnd/middlewares/devices.js')(app, _);
 require('./backEnd/middlewares/deviceGroups.js')(app, _);
+require('./backEnd/middlewares/influxDatabases.js')(app, _);
 require('./backEnd/middlewares/users.js')(app, _);
 require('./backEnd/middlewares/userGroups.js')(app, _);
 

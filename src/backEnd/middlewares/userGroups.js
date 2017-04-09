@@ -397,7 +397,7 @@ module.exports = function (app, _) {
                 }
             });
         });
-    };
+    }
 
     app.post('/getUserGroupMembers', function (req, res) {
 

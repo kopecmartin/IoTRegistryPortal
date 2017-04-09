@@ -19,6 +19,7 @@ const getTranslation = function (messageType) {
 };
 
 const MessagesEN = {
+    ACCESS_DENIED: "Access denied!",
     INTERNAL_DB_ERROR: "Internal database error",
     NAME_PASSWORD_INCORRECT: "Name or password is incorrect!",
     USER_ALREADY_REGISTERED: "This email is already registered. Use a different email.",
@@ -40,7 +41,9 @@ const MessagesEN = {
 
     DEVICE_NOT_FOUND: "Device was not found!",
     DEVICE_DEREGISTER_INFO: "Only the owner can deregister the device!",
-    DEVICE_UPDATE_INFO: "Only the owner of the device can update it!"
+    DEVICE_UPDATE_INFO: "Only the owner of the device can update it!",
+
+    DATABASE_NOT_FOUND: "Database was not found!",
 };
 
 module.exports = getTranslation;

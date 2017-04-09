@@ -5,9 +5,12 @@ let config = require('../config/config.js');
 let crypto = require("crypto");
 let Device = require('./../models/device.js');
 let DeviceToken = require('../models/deviceToken.js');
-//let Influx = require('influx');
 let getTranslation =require('../helpers/translations.js');
+let Influx = require('influx');
+let InfluxDatabase = require('../models/influxDatabase.js');
+let InfluxDatabaseDeviceMem = require('./../models/influxDatabaseDeviceMem.js');
 let messageTypes = require('../helpers/messageTypes.js');
+let request = require('request');
 
 
 module.exports = function (app, _) {
@@ -43,7 +46,7 @@ module.exports = function (app, _) {
 
 
     /**
-     * Generates a new device token and creates a new DeviceToken object and returns it
+     * Generates a new device token and returns a new DeviceToken object
      * @param deviceID - id of a device token is generated for
      */
      function generateDeviceToken (deviceID) {
@@ -57,8 +60,13 @@ module.exports = function (app, _) {
     app.post('/device', function (req, res) {
 
         // retrieve information
-        // TODO email in the API call is just a temporary solution, it's needed to use an API key!!!
-        let body = _.pick(req.body, 'id', 'APIKey', 'ioFeatures');
+        // TODO suggestion: add one more argument, where can be specified device schema (ioFeatures description)
+        // TODO suggestion:  by user, for devices which can't send this information or it would be easier for a user
+        // TODO suggestion: use influx database address specified by user => add one more argument to _.pick(),
+        // TODO suggestion:  if so, use this user's address to the device object in MongoDB
+        // TODO suggestion: databaseName could be an array - if it would be wanted, a device can publish values
+        // TODO suggestion:  in multiple databases
+        let body = _.pick(req.body, 'id', 'APIKey', 'hostname', 'databaseName', 'ioFeatures');
 
         authDevice.authenticateAPIKey(body.APIKey).then((email) => {
 
@@ -71,6 +79,7 @@ module.exports = function (app, _) {
                 else if (device) {
                     // device already exists => update ioFeatures and create a new device token
                     device.ioFeatures = body.ioFeatures;
+                    // TODO: maybe update a hostname too?
                     device.updated_at = new Date();
 
                     device.save(function (err) {
@@ -98,6 +107,7 @@ module.exports = function (app, _) {
                                             let updatedDevice = {
                                                 token: newDeviceToken.token,
                                                 email: device.email,
+                                                hostname: device.hostname,
                                                 id: device.id,
                                                 ioFeatures: device.ioFeatures,
                                                 created_at: device.created_at,
@@ -117,10 +127,9 @@ module.exports = function (app, _) {
                     let newDevice = new Device({
                         id: body.id,
                         email: email,
-                        ioFeatures: body.ioFeatures,
+                        hostname: body.hostname,
+                        ioFeatures: body.ioFeatures,  // it's actually database schema
                     });
-
-                    let newDeviceToken = generateDeviceToken(body.id);
 
                     // save the device
                     newDevice.save(function (err) {
@@ -128,22 +137,56 @@ module.exports = function (app, _) {
                             res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                         }
                         else {
-                            // save the device token
-
-                            newDeviceToken.save(function (err) {
+                            // find the influx database device will send information to
+                            InfluxDatabase.findOne({name: body.databaseName}, function (err, DB) {
+                                console.log("not even here? ", err, DB);
                                 if (err) {
                                     res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                                 }
+                                else if (!DB) {
+                                    res.status(404).json({msg: getTranslation(messageTypes.DATABASE_NOT_FOUND)});
+                                }
+                                // only the owner of the database can register a new device to publish its values there
+                                else if (DB.email !== email) {
+                                    res.status(403).json({msg: getTranslation(messageTypes.ACCESS_DENIED)});
+                                }
                                 else {
-                                    // add the device token to the device object to be returned
-                                    let newDevice = {
+
+                                    // create a new InfluxDevice membership object
+                                    let newDeviceDBMem = new InfluxDatabaseDeviceMem({
                                         id: body.id,
-                                        email: email,
-                                        ioFeatures: body.ioFeatures,
-                                        token: newDeviceToken.token,
-                                    };
-                                    //return the newly created device object with the device token
-                                    res.status(201).json(newDevice);
+                                        influxDatabaseID: DB.name,
+                                    });
+
+                                    // create the new Membership - device <-> influxDB
+                                    newDeviceDBMem.save(function (err) {
+                                        if (err) {
+                                            res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                                        }
+                                        else {
+                                            // create a new device token
+                                            let newDeviceToken = generateDeviceToken(body.id);
+                                            // save the device token
+                                            newDeviceToken.save(function (err) {
+                                                if (err) {
+                                                    res.status(500).json({
+                                                        msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)
+                                                    });
+                                                }
+                                                else {
+                                                    // add the device token to the device object to be returned
+                                                    let newDevice = {
+                                                        id: body.id,
+                                                        email: email,
+                                                        ioFeatures: body.ioFeatures,
+                                                        token: newDeviceToken.token,
+                                                    };
+                                                    //return the newly created device object with the device token
+                                                    res.status(201).json(newDevice);
+                                                }
+                                            });
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -246,6 +289,10 @@ module.exports = function (app, _) {
     });
 
 
+    // ------ communication with devices ------
+    // TODO implement it through sockets - socket.io
+
+
     app.post('/sendValueToDevice', function (req, res) {
 
     });
@@ -255,12 +302,12 @@ module.exports = function (app, _) {
     app.post('/publishValue', function (req, res) {
 
         // retrieve information
-        let body = _.pick(req.body, 'token', 'id');  // TODO what kind of data will device send???
+        let body = _.pick(req.body, 'token', 'id', 'ioFeatures');  // device will send json in ioFeatures
 
         authDevice.authenticateDevice(body.token, body.id).then((id) => {
+            
 
-
-            }, (errCode) => {
+        }, (errCode) => {
             res.status(403).json({});
         });
     });

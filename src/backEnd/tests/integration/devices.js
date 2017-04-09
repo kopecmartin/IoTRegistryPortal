@@ -8,15 +8,19 @@ let conf = require('../../config/config.js');
 let API_key = require('../../models/API_key.js');
 let Device = require('./../../models/deviceGroup.js');
 let DeviceToken = require('./../../models/deviceToken.js');
+let InfluxDatabase = require('./../../models/influxDatabase.js');
+let InfluxDatabaseMem = require('./../../models/influxDatabaseDeviceMem.js');
 let Token = require('./../../models/token.js');
 let User = require('../../models/user');
 
 
-describe('Create a new device', function () {
+describe('-- Create a new device --', function () {
 
     let data = {
         email: "testUser2@mail.com",
         password: "secret",
+        hostname: "testHost",
+        databaseName: "testInfluxDB",
     };
     let deviceID = "4D5D7sdf546c5DFioD6sd54"; // TODO, for now, there is no validation for device's ID
     let APIKey = "";
@@ -46,7 +50,21 @@ describe('Create a new device', function () {
                                     throw err;
                                 }
                                 APIKey = res.body.api_key;
-                                done();
+
+                                // create an influx DB
+                                request(conf.server.url)
+                                    .post('/createInfluxDB')
+                                    .send({
+                                        token: token,
+                                        name: data.databaseName,
+                                    })
+                                    .end(function (err, res) {
+                                        if (err) {
+                                            throw err;
+                                        }
+                                        // TODO check response
+                                        done();
+                                    });
                             });
                     });
             });
@@ -58,7 +76,14 @@ describe('Create a new device', function () {
                 User.remove({email: data.email}, function () {
                     Token.remove({email: data.email}, function () {
                         DeviceToken.remove({}, function () {
-                            done();
+                            InfluxDatabase.remove({email: data.email}, function () {
+                                InfluxDatabaseMem.remove({}, function () {
+                                    // delete data in influx DB too
+                                    requests.dropInfluxDB({name: data.databaseName}).then((res) => {
+
+                                    }).then(done, done);
+                                });
+                            });
                         });
                     });
                 });
@@ -70,7 +95,9 @@ describe('Create a new device', function () {
         let body = {
             id: deviceID,
             email: data.email,
+            hostname: data.hostname,
             APIKey: APIKey,
+            databaseName: data.databaseName,
             // TODO, for now ioFeatures are not exactly specified, but it's gonna be an object for sure
             ioFeatures: {
                 input: "value",
@@ -131,9 +158,11 @@ describe('Update - delete - find', function () {
     let user = {
         email: "testUser2@mail.com",
         password: "secret",
+        databaseName: "testInfluxDB",
     };
     let dev = {
         id: "FF5D7sdf546c5DFioD6sd55",
+        hostname: "testHost",
         ioFeatures: {
             input: "value",
             output: {
@@ -173,19 +202,34 @@ describe('Update - delete - find', function () {
                                 }
                                 APIKey = res.body.api_key;
 
+                                // create an influx DB
                                 request(conf.server.url)
-                                    .post('/device')
+                                    .post('/createInfluxDB')
                                     .send({
-                                        id: dev.id,
-                                        APIKey: APIKey,
-                                        ioFeatures: dev.ioFeatures,
+                                        token: userToken,
+                                        name: user.databaseName,
                                     })
                                     .end(function (err, res) {
                                         if (err) {
                                             throw err;
                                         }
-                                        devToken = res.body.token;
-                                        done();
+
+                                        request(conf.server.url)
+                                            .post('/device')
+                                            .send({
+                                                id: dev.id,
+                                                APIKey: APIKey,
+                                                hostname: dev.hostname,
+                                                databaseName: user.databaseName,
+                                                ioFeatures: dev.ioFeatures,
+                                            })
+                                            .end(function (err, res) {
+                                                if (err) {
+                                                    throw err;
+                                                }
+                                                devToken = res.body.token;
+                                                done();
+                                            });
                                     });
                             });
                     });
@@ -198,7 +242,14 @@ describe('Update - delete - find', function () {
                 User.remove({email: user.email}, function () {
                     Token.remove({email: user.email}, function () {
                         DeviceToken.remove({}, function () {
-                            done();
+                            InfluxDatabase.remove({email: user.email}, function () {
+                                InfluxDatabaseMem.remove({}, function () {
+                                    // delete data in influx DB too
+                                    requests.dropInfluxDB({name: user.databaseName}).then((res) => {
+
+                                    }).then(done, done);
+                                });
+                            });
                         });
                     });
                 });

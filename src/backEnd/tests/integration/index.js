@@ -1,7 +1,10 @@
 let mongoose = require('mongoose');
 let conf = require('../../config/config.js');
+let Api_key = require('../../models/API_key.js');
 let Device = require('../../models/device.js');
 let DeviceGroup = require('./../../models/deviceGroup.js');
+let InfluxDatabase = require('./../../models/influxDatabase.js');
+let InfluxDatabaseMem = require('./../../models/influxDatabaseDeviceMem.js');
 let User = require('../../models/user.js');
 let UserGroup = require('../../models/userGroup.js');
 let UserGroupMem = require('../../models/userGroupMem.js');
@@ -19,7 +22,13 @@ describe('Testing Middleware', function () {
                     UserGroup.remove({}, function () {
                         UserGroupMem.remove({}, function () {
                             Token.remove({}, function () {
-                                done();
+                                Api_key.remove({}, function () {
+                                    InfluxDatabase.remove({}, function () {
+                                        InfluxDatabaseMem.remove({}, function () {
+                                            done();
+                                        });
+                                    });
+                                });
                             });
                         });
                     });

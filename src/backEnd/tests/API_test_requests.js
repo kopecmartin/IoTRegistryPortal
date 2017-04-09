@@ -1,4 +1,5 @@
 let request = require('supertest');
+let requestForInflux = require('request');
 let conf = require('../config/config.js');
 
 
@@ -55,6 +56,35 @@ module.exports = {
                     }
                     resolve(res);
                 });
+        });
+    },
+
+    /**
+     * Temporary function for deleting influx DBs till an interface is created.
+     * @param body
+     * @returns {Promise}
+     */
+    dropInfluxDB: function (body) {
+        return new Promise((resolve, reject) => {
+
+            let createFlag = 'q=DROP DATABASE';
+
+            let uri = 'http://localhost:8086/query?' + createFlag + body.name;
+
+            let options = {
+                uri: uri,
+                method: 'POST',
+            };
+
+            // send request to influxDB server to create a new database
+            requestForInflux(options, function (err, res, body) {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(res);
+                }
+            });
         });
     },
 };

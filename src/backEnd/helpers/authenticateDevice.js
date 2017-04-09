@@ -2,7 +2,7 @@ let DeviceToken = require('../models/deviceToken.js');
 let API_key = require('../models/API_key.js');
 
 /**
- * Find the device id connected to the token. If provided ID matches with found one,
+ * Find the device id related to the token. If provided ID matches the found one,
  * returns device ID, otherwise returns error number 403 (forbidden)
  * @param token - unique device token
  * @param deviceID - unique device ID
@@ -33,9 +33,10 @@ const authenticateDevice = function (token, deviceID) {
 
 
 /**
- * Find the owner of the API key and returns his email
- * Note: API is generated for device registration process
+ * Finds the owner of the API key and returns his email
+ * Note: API is generated only for device registration process
  * and it's valid for only limited period of time
+ * Note: As soon as it's used, it expires
  * @param API
  * @returns {Promise}
  */
@@ -53,6 +54,8 @@ const authenticateAPIKey = function (API) {
                 reject(403);  // forbidden
             }
             else {
+                // API verified, now delete the API key
+                API_Record[0].expireNow();
                 resolve(API_Record[0].email);  // return user's email
             }
         });
