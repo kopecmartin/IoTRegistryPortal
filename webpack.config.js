@@ -43,12 +43,12 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 include: APP_DIR,
-                loaders: ['babel'],
+                loaders: ['babel-loader'],
                 exclude: /node_modules/
             },
             {
                 test: /\.(less|css)$/,
-                loader: 'style!css!less'
+                loader: 'style-loader!css-loader!less-loader'
             },
             {
                 test: /\.png$|\.gif$/,
