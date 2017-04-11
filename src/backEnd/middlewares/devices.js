@@ -6,7 +6,6 @@ let crypto = require("crypto");
 let Device = require('./../models/device.js');
 let DeviceToken = require('../models/deviceToken.js');
 let getTranslation =require('../helpers/translations.js');
-let Influx = require('influx');
 let InfluxDatabase = require('../models/influxDatabase.js');
 let InfluxDatabaseDeviceMem = require('./../models/influxDatabaseDeviceMem.js');
 let messageTypes = require('../helpers/messageTypes.js');
@@ -236,7 +235,7 @@ module.exports = function (app, _) {
     app.put('/device', function (req, res) {
         // for now, only the owner can update the device  // TODO ?
         // retrieve information
-        let body = _.pick(req.body, 'token', 'id', 'deviceGroup', 'description', 'newOwnerEmail');
+        let body = _.pick(req.body, 'token', 'id', 'description', 'newOwnerEmail');
 
         authenticateUser(body.token).then((email) => {
 
@@ -251,9 +250,7 @@ module.exports = function (app, _) {
                     res.status(403).json({msg: getTranslation(messageTypes.DEVICE_UPDATE_INFO)});
                 }
                 else {
-                    if (body.deviceGroup) {
-                        device.deviceGroup = body.deviceGroup;
-                    }
+
                     if (body.description) {
                         device.description = body.description;
                     }
@@ -262,7 +259,7 @@ module.exports = function (app, _) {
                         device.email = body.newOwnerEmail;
                     }
                     // if something were updated
-                    if (body.deviceGroup || body.description || body.newOwnerEmail) {
+                    if (body.description || body.newOwnerEmail) {
                         device.updated_at = new Date();
 
                         device.save(function (err) {

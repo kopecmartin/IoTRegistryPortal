@@ -1,5 +1,7 @@
 let authenticateUser = require('../helpers/authenticateUser.js');
+let Device = require('./../models/device.js');
 let DeviceGroup = require('./../models/deviceGroup.js');
+let DeviceGroupMem = require('./../models/deviceGroupMem.js');
 let getTranslation = require('../helpers/translations.js');
 let messageTypes = require('../helpers/messageTypes.js');
 
@@ -28,6 +30,7 @@ module.exports = function (app, _) {
                         name: body.name,
                         description: body.description,
                         path: body.path,
+                        parentID: null,     // TODO parent ID
                     });
 
                     // save the group
@@ -49,6 +52,7 @@ module.exports = function (app, _) {
     app.put('/deviceGroup', function (req, res) {
         // for now, only the owner can update the group  // TODO ?
         // retrieve information
+        // TODO parent ID
         let body = _.pick(req.body, 'token', 'id', 'name', 'description', 'path');
 
         authenticateUser(body.token).then((email) => {
@@ -151,21 +155,175 @@ module.exports = function (app, _) {
     });
 
 
-    /*
-     app.post('/addDeviceToGroup', function (req, res) {
-     // not needed!!, update device is enough!!
+
+     app.post('/deviceGroupMember', function (req, res) {
+
+         // retrieve information
+         let body = _.pick(req.body, "token", "deviceID", "groupID");
+
+         authenticateUser(body.token).then((email) => {
+             // find the device
+             Device.findOne({id: body.deviceID}, function (err, device) {
+                 if (err) {
+                    res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                 }
+                 else if (!device) {
+                    res.status(404).json({msg: getTranslation(messageTypes.DEVICE_NOT_FOUND)});
+                 }
+                 // TODO check permissions to the device
+                 else {
+                     // find the group
+                     DeviceGroup.findById(body.groupID, function (err, group) {
+                         if (err) {
+                             res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                         }
+                         else if (!group) {
+                             res.status(404).json({msg: getTranslation(messageTypes.GROUP_NOT_FOUND)});
+                         }
+                         // TODO check permissions to the group
+                         else {
+                             let deviceGroupMem = new DeviceGroupMem({
+                                 deviceID: device.id,
+                                 groupID: group._id,
+                             });
+
+                             deviceGroupMem.save(function (err) {
+                                 if (err) {
+                                     res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                                 }
+                                 else {
+                                     // return the newly created member object
+                                     res.status(201).json(deviceGroupMem);
+                                 }
+                             });
+                         }
+                    });
+                 }
+           });
+
+         }, (errCode) => {
+             res.status(403).json({});
+         });
      });
 
 
-     app.post('/removeDeviceFromGroup', function (req, res) {
-     // not needed!!, update device is enough!!
-     });
+    app.delete('/deviceGroupMember', function (req, res) {
+
+        // retrieve information
+        let body = _.pick(req.body, "token", "deviceID", "groupID");
+
+        authenticateUser(body.token).then((email) => {
+            // find the device
+            Device.findOne({id: body.deviceID}, function (err, device) {
+                if (err) {
+                    res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                }
+                else if (!device) {
+                    res.status(404).json({msg: getTranslation(messageTypes.DEVICE_NOT_FOUND)});
+                }
+                // TODO check permissions to the device
+                else {
+                    // find the group
+                    DeviceGroup.findById(body.groupID, function (err, group) {
+                        if (err) {
+                            res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                        }
+                        else if (!group) {
+                            res.status(404).json({msg: getTranslation(messageTypes.GROUP_NOT_FOUND)});
+                        }
+                        // TODO check permissions to the group
+                        else {
+
+                            DeviceGroupMem.findOneAndRemove({
+                                deviceID: body.deviceID,
+                                groupID: body.groupID,
+                            }, function (err, membership) {
+                                if (err) {
+                                    res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                                }
+                                else {
+                                    // return deleted membership object
+                                    res.status(200).json(membership);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+        }, (errCode) => {
+            res.status(403).json({});
+        });
+    });
 
 
-     app.post('/getDevicesInGroup', function (req, res) {
-     // not needed!!, update device is enough!!
-     });
+    /**
+     * Returns a list of devices.
+     * @param body - object of required information (groupID)
+     * @returns {Promise}
      */
+    function getDeviceGroupMembers (body) {
+
+        return new Promise((resolve, reject) => {
+            // let's get a list of objects where IDs belongs to members of the group specified by gropupID
+            DeviceGroupMem.find({groupID: body.groupID}, 'email', function (err, IDs) {
+                if (err) {
+                    reject(500)
+                }
+                else {
+                    let arrDevices = [];
+                    for (let i = 0; i < IDs.length; i++) {
+                        arrDevices.push(IDs[i].email);
+                    }
+
+                    Device.find({id: {$in: arrDevices}}, function (err, devices) {
+                        if (err) {
+                            reject(500)
+                        }
+                        else if (!devices) {
+                            reject(404)
+                        }
+                        // TODO check permissions
+                        else {
+                            // return a list of devices
+                            resolve(arrDevices)
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+
+    app.post('/getDeviceGroupMembers', function (req, res) {
+
+         // retrieve information
+         let body = _.pick(req.body, "token", "groupID");
+
+         authenticateUser(body.token).then((email) => {
+
+             getDeviceGroupMembers(body).then((devices) => {
+                 res.status(200).json(devices);
+             }, (errCode) => {
+                 switch (errCode) {
+                     case 500:
+                         res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                         break;
+                     case 404:
+                         res.status(404).json({msg: getTranslation(messageTypes.DEVICE_NOT_FOUND)});
+                         break;
+                     //case 403:
+                     //    res.status(403).json(
+                     //        //TODO true/false?
+                     //        {msg: getTranslation(messageTypes.USER_GROUP_ACCESS_MEMBER_LIST_INFO)}
+                     //    );
+                 }
+             });
+         }, (errCode) => {
+             res.status(403).json({});
+         });
+     });
+
 
     // For debug purposes
     app.post('/getDeviceGroups', function (req, res) {

@@ -8,6 +8,7 @@ let deviceGroupSchema = new mongoose.Schema({
     name: {type: String, required: true},
     description: String,
     path: {type: String, default: "/"},
+    parentID: {type: String, default: null},
     created_at: {type: Date, default: Date.now},
     updated_at: {type: Date, default: Date.now},
 });

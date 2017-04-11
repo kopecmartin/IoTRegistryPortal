@@ -5,7 +5,6 @@ let mongoose = require('mongoose');
 let deviceSchema = new mongoose.Schema({
     id: {type: String, required: true, unique: true},  // unique device ID
     email: {type: String, required: true},  // email of the owner
-    deviceGroup: {type: String, required: true, default: '/'},  // default group is /
     description: String,
     ioFeatures: Object,    // device will provide a json description of its input and output features
     created_at: {type: Date, default: Date.now},

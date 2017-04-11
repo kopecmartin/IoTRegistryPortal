@@ -291,20 +291,17 @@ describe('Update - delete - find', function () {
 
     it('update a device', function (done) {
         let description = "description";
-        let group = "group";
 
         let body = {
             token: userToken,
             id: dev.id,
             description: description,
-            deviceGroup: group,
         };
 
         requests.putRequest('/device', body, 200).then((res) => {
             res.body.email.should.be.equal(user.email);
             res.body.id.should.be.equal(body.id);
             res.body.description.should.be.equal(description);
-            res.body.deviceGroup.should.be.equal(group);
             res.body.updated_at.should.not.be.equal(res.body.created_at);
         }).then(done, done);
     });

@@ -7,7 +7,6 @@ let userGroupSchema = new mongoose.Schema({
     email: {type: String, required: true},  // email of the owner
     name: {type: String, required: true},
     description: String,
-    permissions: Number,  // TODO give min permissions as default
     path: {type: String, default: "/"},
     created_at: {type: Date, default: Date.now},
     updated_at: {type: Date, default: Date.now},
