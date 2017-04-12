@@ -30,7 +30,7 @@ export default class UserGroups extends React.Component {
     fetchOwnGroupsData() {
         this.setState({pendingOwnGroups: true});
         //TODO obtain user's email from cookies/redux
-        sendPostRequest("GET_GROUPS_BY_OWNERSHIP", {email: "testUser2@mail.com"}).then((data) => {
+        sendPostRequest("GET_GROUPS_BY_OWNERSHIP", {}).then((data) => {
             //data = this.state.tableHeaders.concat(data);
             console.log("owner", JSON.parse(data.text));
             this.setState({pendingOwnGroups: false, ownGroupsData: JSON.parse(data.text)});
@@ -41,7 +41,7 @@ export default class UserGroups extends React.Component {
 
     fetchMemberInGroupsData() {
         this.setState({pendingOtherGroups: true});
-        sendPostRequest("GET_GROUPS_BY_MEMBERSHIP", {email: "testUser2@mail.com"}).then((data) => {
+        sendPostRequest("GET_GROUPS_BY_MEMBERSHIP", {}).then((data) => {
             console.log("member", JSON.parse(data.text));
             this.setState({pendingOtherGroups: false, memberInGroupsData: JSON.parse(data.text)});
         }, (err) => {
@@ -67,9 +67,11 @@ export default class UserGroups extends React.Component {
 
                 <div style={style}>
                     <h2>My Groups</h2>
-                    {this.state.pendingOwnGroups ? <Loading/> : <List data={this.state.ownGroupsData}/>}
+                    {this.state.pendingOwnGroups ? <Loading/> : <List data={this.state.ownGroupsData}
+                                                                      additionalInfo={true}/>}
                     <h2>Member in</h2>
-                    {this.state.pendingOtherGroups ? <Loading/> : <List data={this.state.memberInGroupsData}/>}
+                    {this.state.pendingOtherGroups ? <Loading/> : <List data={this.state.memberInGroupsData}
+                                                                        additionalInfo={true}/>}
                 </div>
 
                 {

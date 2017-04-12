@@ -13,7 +13,6 @@ export default class UserGroups extends React.Component {
         this.state = {
             name: "",
             description: "",
-            permissions: "",
 
             errorMsg: null,
             nameRequired: null,
@@ -45,14 +44,12 @@ export default class UserGroups extends React.Component {
         let data = {
             name: this.state.name,
             description: this.state.description,
-            permissions: 666,// this.state.permissions,
-            //path: this.state.path,
         };
 
         this.setState({pending: true});
         console.log("submitting", data);
 
-        sendPostRequest("CREATE_USER_GROUP", data).then((res) => {
+        sendPostRequest("CREATE_INFLUX_DATABASE", data).then((res) => {
             console.log("created", JSON.parse(res.text));
             this.setState({pending: false});
             this.props.cancel()
@@ -69,7 +66,6 @@ export default class UserGroups extends React.Component {
                 <form style={{clear: "both"}}>
                     <InputLabelForm label="Group Name"
                                     type="text"
-                                    //placeholder={this.state.firstName}
                                     required={true}
                                     validity={this.state.nameRequired}
                                     onBlur={this.checkValidity.bind(this, "name")}
@@ -77,14 +73,7 @@ export default class UserGroups extends React.Component {
                     />
                     <InputLabelForm label="Description"
                                     type="text"
-                                    //placeholder={this.state.firstName}
                                     onChange={this.handlerOnChange.bind(this, "description")}
-                    />
-                    <InputLabelForm label="Permissions"
-                                    type="text"
-                                    //placeholder={this.state.firstName}
-                                    onChange={this.handlerOnChange.bind(this, "permissions")}
-                                    //help={PermissionsHelp}
                     />
                 </form>
 

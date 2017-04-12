@@ -4,6 +4,7 @@ import {Router, Route, IndexRoute, browserHistory, hashHistory} from 'react-rout
 
 import DangerZone from './frontEnd/views/DangerZone.jsx';
 import Dashboard from './frontEnd/views/Dashboard.jsx';
+import Databases from './frontEnd/views/Databases.jsx';
 import Devices from './frontEnd/views/Devices.jsx';
 import Layout from './frontEnd/Layout.jsx';
 import LoginPage from './frontEnd/views/LoginPage.jsx';
@@ -30,6 +31,7 @@ ReactDOM.render(
                     <Route path="/portal/dashboard" component={Dashboard}/>
                     <Route path="/portal/groups" component={UserGroups}/>
                     <Route path="/portal/devices" component={Devices}/>
+                    <Route path="/portal/databases" component={Databases}/>
                     <Route path="/portal/registration" component={Registration}/>
                     <Route path="/portal/danger" component={DangerZone}/>
                     <Route path="/portal/settings" component={Settings}/>

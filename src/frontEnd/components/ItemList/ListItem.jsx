@@ -2,7 +2,7 @@ import React from 'react';
 import AdditionalInfo from './AdditionalInfo.jsx';
 
 
-const ListItem = ({data}) => {
+const ListItem = ({data, additionalInfo=false}) => {
 
     return (
         <div className="list-group-item">
@@ -38,7 +38,13 @@ const ListItem = ({data}) => {
                         </div>
                     </div>
                     <div className="list-view-pf-additional-info">
-                        <AdditionalInfo name={data.additionalInfoLst[0].name} number={data.additionalInfoLst[0].number}/>
+                        {additionalInfo ?
+                            <AdditionalInfo name={data.additionalInfoLst[0].name}
+                                            number={data.additionalInfoLst[0].number}/>
+                            :
+                            null
+                        }
+
                     </div>
                 </div>
             </div>

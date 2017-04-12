@@ -1,21 +1,55 @@
 import cookie from 'react-cookie';
-import LoginPageComponent from '../components/LoginPage/LoginPageComponent.jsx';
-import React, { PropTypes } from 'react';
 import { hashHistory } from 'react-router';
+import ImageLoader from 'react-imageloader';
+import React, { PropTypes } from 'react';
+
+import Login from '../components/LoginPage/Login.jsx';
+import Register from '../components/LoginPage/Register.jsx';
 import {sendPostRequest} from '../helpers/HTTP_requests.js';
 
 import { connect } from 'react-redux'
 let actions = require('./../actions/actions.js');
+
+import 'patternfly/dist/css/patternfly.css';
+import 'patternfly/dist/css/patternfly-additions.css';
+import '../components/LoginPage/style.css';
 
 
 class LoginPage extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+
+        this.state = {
+            username: "",
+            password: "",
+            loginForm: true
+        };
     }
 
-    login(data) {
+    handlerOnChange(type, evt) {
+        switch (type) {
+            case "name":
+                this.setState({username: evt.target.value});
+                console.log(evt.target.value);
+                break;
+            case "password":
+                this.setState({password: evt.target.value});
+                console.log(evt.target.value);
+                break;
+        }
+    }
+
+    toggle() {
+        this.setState({loginForm: !this.state.loginForm});
+    }
+
+    login() {
         console.log("login");
+        let data = {
+            email: this.state.username,
+            password: this.state.password
+        };
         console.log(data);
         sendPostRequest("LOGIN", data).then((data) => {
             //data = this.state.tableHeaders.concat(data);
@@ -30,14 +64,52 @@ class LoginPage extends React.Component {
         });
     }
 
-    register(data) {
+    register() {
         console.log("register");
+        let data = {
+            email: this.state.username,
+            password: this.state.password
+        };
         console.log(data);
+        sendPostRequest("REGISTER", data).then((data) => {
+            //data = this.state.tableHeaders.concat(data);
+            console.log("registered", JSON.parse(data.text));
+
+            this.toggle();
+        }, (err) => {
+            console.log("registration failed", err);
+
+            // TODO handle error
+        });
     }
 
     render() {
         return (
-            <LoginPageComponent loginOnClick={this.login.bind(this)} registerOnClick={this.register.bind(this)}/>
+            <div className="login-pf login-background">
+
+                <div className="container">
+                    <div className="row">
+                        <div className="col-sm-12">
+                            <div id="brand">
+                                <ImageLoader src={require("patternfly/dist/img/brand.svg")}
+                                             alt="PatternFly Enterprise Application"/>
+                            </div>
+                        </div>
+
+                        {this.state.loginForm ? (
+                            <Login usernameOnChange={this.handlerOnChange.bind(this, "name")}
+                                   passwordOnChange={this.handlerOnChange.bind(this, "password")}
+                                   toggle={this.toggle.bind(this)}
+                                   login={this.login.bind(this)}/>
+                        ) : (
+                            <Register usernameOnChange={this.handlerOnChange.bind(this, "name")}
+                                      passwordOnChange={this.handlerOnChange.bind(this, "password")}
+                                      toggle={this.toggle.bind(this)}
+                                      register={this.register.bind(this)}/>
+                        )}
+                    </div>
+                </div>
+            </div>
         )
     }
 }

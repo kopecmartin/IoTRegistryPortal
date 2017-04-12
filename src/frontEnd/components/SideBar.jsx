@@ -36,6 +36,13 @@ const SideBar = ({content, site, changeSite}) => {
                         <span className="list-group-item-value">{content.devices}</span>
                     </a>
                 </li>
+                <li className={site.indexOf("databases") >= 0 ? "list-group-item active" : "list-group-item"}
+                    onClick={() => changeTo("/portal/databases")}>
+                    <a>
+                        <span className="fa fa-server"/>
+                        <span className="list-group-item-value">{content.databases}</span>
+                    </a>
+                </li>
                 <li className={site.indexOf("registration") >= 0 ? "list-group-item active" : "list-group-item"}
                     onClick={() => changeTo("/portal/registration")}>
                     <a>
