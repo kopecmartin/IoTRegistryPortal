@@ -2,7 +2,8 @@
  * API types, object contains URL address (in string) for each API
  */
 
-const HOSTNAME = "http://192.168.0.100:3000/";
+// TODO create a config for frontend and store address there
+const HOSTNAME = "http://192.168.88.244:3000/";
 
 const API_types = {
     LOGIN: HOSTNAME + "login",
@@ -16,6 +17,10 @@ const API_types = {
 
     CREATE_INFLUX_DATABASE: HOSTNAME + "createInfluxDB",
     GET_OWN_INFLUX_DATABASES: HOSTNAME + "getOwnInfluxDBs",
+
+    GET_API_KEY: HOSTNAME + "APIKey",
+    UPDATE_API_KEY: HOSTNAME + "APIKey",
+    DELETE_API_KEY: HOSTNAME + "APIKey",
 };
 
 export default API_types;

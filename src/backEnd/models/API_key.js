@@ -2,21 +2,37 @@ let config = require('../config/config.js');
 let mongoose = require('mongoose');
 
 
+const minutesFromNow = function(){
+    let timeObject = new Date();
+    timeObject.setTime(timeObject.getTime() +  config.database.API_keyExpireIn * 60);
+    return timeObject;
+};
+
+
 // create a schema
 let API_keySchema = new mongoose.Schema({
     api_key: {type: String, required: true, unique: true},
     // email of the owner
     email: {type: String, required: true},
     // expiration in minutes
-    createdAt: { type: Date, expires: config.database.API_keyExpireIn * 60 , default: Date.now },
-
+    ttl: {type: Number, default: config.database.API_keyExpireIn * 60},
+    createdAt: {type: Date, default: Date.now},
+    expireAt: {type: Date, default: minutesFromNow},
 });
+
 
 API_keySchema.method('expireNow', function () {
     let timeObject = new Date();
     this.expireAt = timeObject.setTime(timeObject.getTime());
     return this;
 });
+
+
+API_keySchema.method('resetExpiration', function () {
+    this.expireAt = minutesFromNow();
+    return this;
+});
+
 
 //create a model
 let API_key = mongoose.model('API_key', API_keySchema);

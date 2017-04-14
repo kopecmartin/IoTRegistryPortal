@@ -1,7 +1,7 @@
 import React from 'react';
 
 import InputLabelForm from './InputLabelForm.jsx';
-import FormButtons from './FormButtons.jsx';
+import FormButtons from '../Buttons/FormButtons.jsx';
 import {sendPostRequest} from '../../helpers/HTTP_requests.js';
 
 

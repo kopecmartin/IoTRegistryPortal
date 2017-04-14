@@ -42,7 +42,7 @@ describe('-- Create a new device --', function () {
                         let token = res.body.token;
 
                         request(conf.server.url)
-                            .post('/getAPIKey')
+                            .post('/APIKey')
                             .send({token: token})
                             .end(function (err, res) {
                                 if (err) {
@@ -191,7 +191,7 @@ describe('Update - delete - find', function () {
                         userToken = res.body.token;
 
                         request(conf.server.url)
-                            .post('/getAPIKey')
+                            .post('/APIKey')
                             .send({token: userToken})
                             .end(function (err, res) {
                                 if (err) {

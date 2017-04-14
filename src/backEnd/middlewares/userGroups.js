@@ -360,7 +360,7 @@ module.exports = function (app, _) {
     });
 
     /**
-     * Returns list of members of a user group
+     * Returns a list of members of a user group
      * @param body - object of required information (groupID, requester or owner email)
      * @returns {Promise}
      */

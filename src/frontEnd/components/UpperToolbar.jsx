@@ -1,4 +1,6 @@
 import React from 'react';
+
+import AddNewBtn from './Buttons/AddNewBtn.jsx';
 import SearchBox from './SearchBox.jsx';
 
 
@@ -6,7 +8,7 @@ const UpperToolbar = ({addNewItemTrigger}) => {
     return (
         <div>
             <div className='btn-toolbar pull-left' style={{marginTop: 20}}>
-                <button type="button" className="btn fa fa-plus" style={{width: 35, height: 35}} onClick={addNewItemTrigger}/>
+                <AddNewBtn onClick={addNewItemTrigger}/>
 
                 <SearchBox placeholder="Search" onChange={null}/>
 

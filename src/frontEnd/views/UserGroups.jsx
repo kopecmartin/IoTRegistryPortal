@@ -29,7 +29,6 @@ export default class UserGroups extends React.Component {
 
     fetchOwnGroupsData() {
         this.setState({pendingOwnGroups: true});
-        //TODO obtain user's email from cookies/redux
         sendPostRequest("GET_GROUPS_BY_OWNERSHIP", {}).then((data) => {
             //data = this.state.tableHeaders.concat(data);
             console.log("owner", JSON.parse(data.text));

@@ -1,15 +1,15 @@
 import React from 'react';
 
 
-const InputLabelForm = ({help, label, onBlur, onChange, placeholder, required, type, validity}) => {
+const InputLabelForm = ({help, label, onBlur, onChange, onClick, placeholder, required, type, validity}) => {
 
     let valid = validity || "";
 
-    if (help != null) {
+    if (help !== null) {
         help = <small className="form-text text-muted">{help}</small>;
     }
 
-    if (required != null) {
+    if (required !== null) {
         required = <small className="form-text text-muted" style={{color: "red"}}>*</small>;
     }
 
@@ -23,6 +23,7 @@ const InputLabelForm = ({help, label, onBlur, onChange, placeholder, required, t
                     type={type}
                     placeholder={placeholder || label}
                     onChange={onChange}
+                    onClick={onClick}
                     onBlur={onBlur}/>
                 {help}
             </div>
