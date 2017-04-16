@@ -43,7 +43,10 @@ describe('-- Create a new device --', function () {
 
                         request(conf.server.url)
                             .post('/APIKey')
-                            .send({token: token})
+                            .send({
+                                token: token,
+                                databaseName: data.databaseName,
+                            })
                             .end(function (err, res) {
                                 if (err) {
                                     throw err;
@@ -95,7 +98,6 @@ describe('-- Create a new device --', function () {
             id: deviceID,
             email: data.email,
             APIKey: APIKey,
-            databaseName: data.databaseName,
             // TODO, for now ioFeatures are not exactly specified, but it's gonna be an object for sure
             ioFeatures: {
                 input: "value",
@@ -192,7 +194,10 @@ describe('Update - delete - find', function () {
 
                         request(conf.server.url)
                             .post('/APIKey')
-                            .send({token: userToken})
+                            .send({
+                                token: userToken,
+                                databaseName: user.databaseName,
+                            })
                             .end(function (err, res) {
                                 if (err) {
                                     throw err;

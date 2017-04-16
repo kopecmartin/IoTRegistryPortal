@@ -17,7 +17,7 @@ module.exports = function (app, _) {
     app.post('/APIKey', function (req, res) {
 
         // retrieve information
-        let body = _.pick(req.body, 'token');
+        let body = _.pick(req.body, 'token', 'databaseName');
 
         authenticateUser(body.token).then((email) => {
 
@@ -26,6 +26,7 @@ module.exports = function (app, _) {
             let newAPI_key = new API_key({
                 api_key: API,
                 email: email,
+                databaseName: body.databaseName,
             });
 
             // save the API key
@@ -47,7 +48,7 @@ module.exports = function (app, _) {
     app.put("/APIKey", function (req, res) {
 
         // retrieve information
-        let body = _.pick(req.body, 'token', 'api_key');
+        let body = _.pick(req.body, 'token', 'api_key', 'databaseName');
 
         authenticateUser(body.token).then((email) => {
 
@@ -64,6 +65,11 @@ module.exports = function (app, _) {
                else {
                    // extends expiration interval
                    key.resetExpiration();
+
+                   // update database name if it's changed
+                   if (body.databaseName !== key.databaseName) {
+                       key.databaseName = body.databaseName;
+                   }
 
                    // save the API key
                    key.save(function (err) {
@@ -140,10 +146,10 @@ module.exports = function (app, _) {
         // TODO suggestion: use influx database address specified by user => add one more argument to _.pick(),
         // TODO suggestion:  if so, use this user's address to the device object in MongoDB
         // TODO suggestion: databaseName could be an array - if it would be wanted, a device can publish values
-        // TODO suggestion:  in multiple databases
-        let body = _.pick(req.body, 'id', 'APIKey', 'databaseName', 'ioFeatures');
+        // TODO suggestion:  in multiple databases  -- not good idea
+        let body = _.pick(req.body, 'id', 'APIKey', 'ioFeatures');  // TODO update databaseName???
 
-        authDevice.authenticateAPIKey(body.APIKey).then((email) => {
+        authDevice.authenticateAPIKey(body.APIKey).then((API) => {
 
             // let's check if the id is not already in the database
             Device.findOne({id: body.id}, function (err, device) {
@@ -198,7 +204,7 @@ module.exports = function (app, _) {
 
                     let newDevice = new Device({
                         id: body.id,
-                        email: email,
+                        email: API.email,
                         ioFeatures: body.ioFeatures,  // it's actually database schema
                     });
 
@@ -209,7 +215,7 @@ module.exports = function (app, _) {
                         }
                         else {
                             // find the influx database device will send information to
-                            InfluxDatabase.findOne({name: body.databaseName}, function (err, DB) {
+                            InfluxDatabase.findOne({name: API.databaseName}, function (err, DB) {
                                 console.log("not even here? ", err, DB);
                                 if (err) {
                                     res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
@@ -218,7 +224,7 @@ module.exports = function (app, _) {
                                     res.status(404).json({msg: getTranslation(messageTypes.DATABASE_NOT_FOUND)});
                                 }
                                 // only the owner of the database can register a new device to publish its values there
-                                else if (DB.email !== email) {
+                                else if (DB.email !== API.email) {
                                     res.status(403).json({msg: getTranslation(messageTypes.ACCESS_DENIED)});
                                 }
                                 else {
@@ -248,7 +254,7 @@ module.exports = function (app, _) {
                                                     // add the device token to the device object to be returned
                                                     let newDevice = {
                                                         id: body.id,
-                                                        email: email,
+                                                        email: API.email,
                                                         ioFeatures: body.ioFeatures,
                                                         token: newDeviceToken.token,
                                                     };

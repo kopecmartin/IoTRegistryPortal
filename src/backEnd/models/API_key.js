@@ -14,6 +14,10 @@ let API_keySchema = new mongoose.Schema({
     api_key: {type: String, required: true, unique: true},
     // email of the owner
     email: {type: String, required: true},
+    // database name where device will send information to
+    // it's temporarily saved here, so that API key is the only information
+    // a user has to deliver to a device to register it
+    databaseName: {type: String, required: true},
     // expiration in minutes
     ttl: {type: Number, default: config.database.API_keyExpireIn * 60},
     createdAt: {type: Date, default: Date.now},

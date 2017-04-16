@@ -33,7 +33,7 @@ const authenticateDevice = function (token, deviceID) {
 
 
 /**
- * Finds the owner of the API key and returns his email
+ * Finds the owner of the API key and returns API object
  * Note: API is generated only for device registration process
  * and it's valid for only limited period of time
  * Note: As soon as it's used, it expires
@@ -56,7 +56,7 @@ const authenticateAPIKey = function (API) {
             else {
                 // API verified, now delete the API key
                 API_Record[0].expireNow();
-                resolve(API_Record[0].email);  // return user's email
+                resolve(API_Record[0]);
             }
         });
     });

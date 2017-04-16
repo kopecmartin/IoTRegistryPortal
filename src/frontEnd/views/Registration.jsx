@@ -29,7 +29,7 @@ class Registration extends React.Component {
 
     getAPIKey() {
         this.setState({pending: true});
-        sendPostRequest("GET_API_KEY", {}).then((data) => {
+        sendPostRequest("GET_API_KEY", {databaseName: this.state.databaseName}).then((data) => {
             console.log("got API key", JSON.parse(data.text));
             this.setState({pending: false, APIKeyObject: JSON.parse(data.text)});
         }, (err) => {
@@ -110,7 +110,6 @@ class Registration extends React.Component {
                                            "\tid: // Your device's ID\n" +
                                            "\tioFeatures: // Schema of your device's input/output features\n" +
                                            "\tAPIKey:" + this.state.APIKeyObject.api_key+"\n" +
-                                           "\tdatabaseName:" + this.state.databaseName + "\n" +
                                            "}"
                                        }
                             />
