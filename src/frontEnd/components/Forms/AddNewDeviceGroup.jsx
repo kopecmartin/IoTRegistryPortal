@@ -5,7 +5,7 @@ import FormButtons from '../Buttons/FormButtons.jsx';
 import {sendPostRequest} from '../../helpers/HTTP_requests.js';
 
 
-export default class AddNewUserGroup extends React.Component {
+export default class AddNewDeviceGroup extends React.Component {
 
     constructor(props) {
         super(props);
@@ -13,7 +13,7 @@ export default class AddNewUserGroup extends React.Component {
         this.state = {
             name: "",
             description: "",
-            permissions: "",
+            path: "",
 
             errorMsg: null,
             nameRequired: null,
@@ -45,14 +45,13 @@ export default class AddNewUserGroup extends React.Component {
         let data = {
             name: this.state.name,
             description: this.state.description,
-            permissions: 666,// this.state.permissions,
-            //path: this.state.path,
+            path: this.state.path,
         };
 
         this.setState({pending: true});
         console.log("submitting", data);
 
-        sendPostRequest("CREATE_USER_GROUP", data).then((res) => {
+        sendPostRequest("CREATE_DEVICE_GROUP", data).then((res) => {
             console.log("created", JSON.parse(res.text));
             this.setState({pending: false});
             this.props.cancel()
@@ -69,7 +68,7 @@ export default class AddNewUserGroup extends React.Component {
                 <form style={{clear: "both"}}>
                     <InputLabelForm label="Group Name"
                                     type="text"
-                                    //placeholder={this.state.firstName}
+                        //placeholder={this.state.firstName}
                                     required={true}
                                     validity={this.state.nameRequired}
                                     onBlur={this.checkValidity.bind(this, "name")}
@@ -77,14 +76,14 @@ export default class AddNewUserGroup extends React.Component {
                     />
                     <InputLabelForm label="Description"
                                     type="text"
-                                    //placeholder={this.state.firstName}
+                        //placeholder={this.state.firstName}
                                     onChange={this.handlerOnChange.bind(this, "description")}
                     />
-                    <InputLabelForm label="Permissions"
+                    <InputLabelForm label="Path"
                                     type="text"
-                                    //placeholder={this.state.firstName}
-                                    onChange={this.handlerOnChange.bind(this, "permissions")}
-                                    //help={PermissionsHelp}
+                        //placeholder={this.state.firstName}
+                                    onChange={this.handlerOnChange.bind(this, "path")}
+                        //help={PermissionsHelp}
                     />
                 </form>
 

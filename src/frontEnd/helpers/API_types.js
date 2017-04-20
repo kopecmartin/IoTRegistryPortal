@@ -3,7 +3,7 @@
  */
 
 // TODO create a config for frontend and store address there
-const HOSTNAME = "http://192.168.88.244:3000/";
+const HOSTNAME = "http://192.168.0.108:3000/";
 
 const API_types = {
     LOGIN: HOSTNAME + "login",
@@ -14,6 +14,11 @@ const API_types = {
     DELETE_USER_GROUP: HOSTNAME + "userGroup",
     GET_GROUPS_BY_OWNERSHIP: HOSTNAME + "getGroupsByOwnership",
     GET_GROUPS_BY_MEMBERSHIP: HOSTNAME + "getGroupsByMembership",
+
+    CREATE_DEVICE_GROUP: HOSTNAME + "deviceGroup",
+    UPDATE_DEVICE_GROUP: HOSTNAME + "deviceGroup",
+    DELETE_DEVICE_GROUP: HOSTNAME + "deviceGroup",
+    GET_DEVICE_GROUPS_BY_OWNERSHIP: HOSTNAME + "getDeviceGroups",
 
     CREATE_INFLUX_DATABASE: HOSTNAME + "createInfluxDB",
     GET_OWN_INFLUX_DATABASES: HOSTNAME + "getOwnInfluxDBs",
