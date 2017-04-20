@@ -16,6 +16,10 @@ export default class Databases extends React.Component {
         }
     }
 
+    clickedItem(data) {
+        console.log("item::", data);
+    }
+
     addNewItemTrigger() {
         this.setState({addNewItemClicked: !this.state.addNewItemClicked});
         this.fetchOwnDatabases();  // TODO optimization - this is now triggered always
@@ -28,7 +32,7 @@ export default class Databases extends React.Component {
                 <h1>Influx Databases</h1>
                 <UpperToolbar addNewItemTrigger={this.addNewItemTrigger.bind(this)}/>
 
-               <ShowInfluxDBs />
+               <ShowInfluxDBs onClick={this.clickedItem.bind(this)}/>
 
                 {
                     this.state.addNewItemClicked ?

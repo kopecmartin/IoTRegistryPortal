@@ -14,13 +14,18 @@ class Registration extends React.Component {
         super(props, context);
 
         this.state = {
-            databaseName: "test",
+            databaseName: "",
             APIKeyObject: null,
 
             addInfluxDB: false,
             pending: false,
             timedOut: false,
         };
+    }
+
+    clickedItem(data) {
+        console.log("item:", data);
+        this.setState({databaseName: data.name, addInfluxDB: false});
     }
 
     addDatabaseTrigger() {
@@ -121,7 +126,7 @@ class Registration extends React.Component {
                     this.state.addInfluxDB ?
                         <PopupAddNew close={this.addDatabaseTrigger.bind(this)}
                                      title="Associate a database">
-                            <AssociateDB/>
+                            <AssociateDB onClick={this.clickedItem.bind(this)}/>
                         </PopupAddNew>
                         :
                         null

@@ -32,7 +32,7 @@ export default class AssociateDB extends React.Component {
                    this.state.addNewDatabase ?
                        <NewInfluxDB cancel={this.addNewTrigger.bind(this)}/>
                        :
-                       <ShowInfluxDBs/>
+                       <ShowInfluxDBs onClick={this.props.onClick}/>
                }
 
            </div>

@@ -15,14 +15,17 @@ export default class ShowInfluxDBs extends React.Component {
             pendingOtherDatabases: false,
             ownDatabases: [],
             otherDatabases: [],
-        }
+        };
+    }
+
+    componentDidMount() {
+        this.fetchOwnDatabases();
     }
 
     fetchOwnDatabases() {
         this.setState({pendingOwnDatabases: true});
         //TODO obtain user's email from cookies/redux
         sendPostRequest("GET_OWN_INFLUX_DATABASES", {}).then((data) => {
-            //data = this.state.tableHeaders.concat(data);
             console.log("owner", JSON.parse(data.text));
             this.setState({pendingOwnDatabases: false, ownDatabases: JSON.parse(data.text)});
         }, (err) => {
@@ -39,9 +42,11 @@ export default class ShowInfluxDBs extends React.Component {
         return (
             <div style={style}>
                 <h2>My Databases</h2>
-                {this.state.pendingOwnDatabases ? <Loading/> : <List data={this.state.ownDatabases}/>}
+                {this.state.pendingOwnDatabases ? <Loading/> : <List onClick={this.props.onClick}
+                                                                     data={this.state.ownDatabases}/>}
                 <h2>Other Databases</h2>
-                {this.state.pendingOtherDatabases ? <Loading/> : <List data={this.state.otherDatabases}/>}
+                {this.state.pendingOtherDatabases ? <Loading/> : <List onClick={this.props.onClick}
+                                                                       data={this.state.otherDatabases}/>}
             </div>
         )
     }

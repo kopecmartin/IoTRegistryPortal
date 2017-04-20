@@ -2,10 +2,16 @@ import React from 'react';
 import AdditionalInfo from './AdditionalInfo.jsx';
 
 
-const ListItem = ({data, additionalInfo=false}) => {
+const ListItem = ({data, additionalInfo=false, onClick}) => {
+
+    const clickedItem = () => {
+        if (onClick !== undefined && onClick !== null) {
+            onClick(data);
+        }
+    };
 
     return (
-        <div className="list-group-item">
+        <div className="list-group-item" onClick={clickedItem}>
             <div className="list-view-pf-checkbox">
                 <input type="checkbox"/>
             </div>

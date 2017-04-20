@@ -64,7 +64,7 @@ export default class UserGroups extends React.Component {
         return (
             <div>
                 <form style={{clear: "both"}}>
-                    <InputLabelForm label="Group Name"
+                    <InputLabelForm label="Database Name"
                                     type="text"
                                     required={true}
                                     validity={this.state.nameRequired}

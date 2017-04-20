@@ -17,6 +17,10 @@ export default class PopupAddNew extends React.Component {
     }
 
     render() {
+        const style = {
+            height: '300px',
+            overflow: 'scroll',
+        };
 
         return (
             <div>
@@ -25,7 +29,7 @@ export default class PopupAddNew extends React.Component {
                     afterClose={this.close.bind(this)}
                     ref="dialogWithCallBacks"
                     title={this.props.title}>
-                    <div>
+                    <div style={style}>
                         {this.props.children}
                     </div>
                 </SkyLight>
