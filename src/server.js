@@ -28,6 +28,7 @@ app.use(cors());
 // use morgan for request debug output
 app.use(morgan('dev'));
 
+require('./backEnd/middlewares/API_keys.js')(app, _);
 require('./backEnd/middlewares/devices.js')(app, _);
 require('./backEnd/middlewares/deviceGroups.js')(app, _);
 require('./backEnd/middlewares/influxDatabases.js')(app, _);

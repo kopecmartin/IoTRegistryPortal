@@ -5,7 +5,7 @@ let config = require('../config/config.js');
 let crypto = require("crypto");
 let Device = require('./../models/device.js');
 let DeviceToken = require('../models/deviceToken.js');
-let getTranslation =require('../helpers/translations.js');
+let getTranslation = require('../helpers/translations.js');
 let InfluxDatabase = require('../models/influxDatabase.js');
 let InfluxDatabaseDeviceMem = require('./../models/influxDatabaseDeviceMem.js');
 let messageTypes = require('../helpers/messageTypes.js');
@@ -14,125 +14,13 @@ let request = require('request');
 
 module.exports = function (app, _) {
 
-    app.post('/APIKey', function (req, res) {
-
-        // retrieve information
-        let body = _.pick(req.body, 'token', 'databaseName');
-
-        authenticateUser(body.token).then((email) => {
-
-            let API = crypto.randomBytes(config.database.API_keyLength).toString('hex');
-
-            let newAPI_key = new API_key({
-                api_key: API,
-                email: email,
-                databaseName: body.databaseName,
-            });
-
-            // save the API key
-            newAPI_key.save(function (err) {
-                if (err) {
-                    res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
-                }
-                else {
-                    //return the newly created API_key object
-                    res.status(201).json(newAPI_key);
-                }
-            });
-        }, (errCode) => {
-            res.status(403).json({});
-        });
-    });
-
-
-    app.put("/APIKey", function (req, res) {
-
-        // retrieve information
-        let body = _.pick(req.body, 'token', 'api_key', 'databaseName');
-
-        authenticateUser(body.token).then((email) => {
-
-           API_key.findOne({api_key: body.api_key}, function (err, key) {
-               if (err) {
-                   res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
-               }
-               else if (!key) {
-                   res.status(403).json({msg: getTranslation(messageTypes.ACCESS_DENIED)});
-               }
-               else if (key.email !== email) {
-                   res.status(403).json({msg: getTranslation(messageTypes.ACCESS_DENIED)});
-               }
-               else {
-                   // extends expiration interval
-                   key.resetExpiration();
-
-                   // update database name if it's changed
-                   if (body.databaseName !== key.databaseName) {
-                       key.databaseName = body.databaseName;
-                   }
-
-                   // save the API key
-                   key.save(function (err) {
-                       if (err) {
-                           res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
-                       }
-                       else {
-                           //return the updated API_key object
-                           res.status(201).json(key);
-                       }
-                   });
-               }
-           });
-
-        }, (errCode) => {
-            res.status(403).json({});
-        });
-    });
-
-
-    app.delete("/APIKey", function (req, res) {
-
-        // retrieve information
-        let body = _.pick(req.body, 'token', 'api_key');
-
-        authenticateUser(body.token).then((email) => {
-
-            // find the API key
-            API_key.findOne({api_key: body.api_key}, function(err, key) {
-                if (err) {
-                    res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
-                }
-                else if (key.email !== email) {
-                    res.status(403).json({msg: getTranslation(messageTypes.ACCESS_DENIED)});
-                }
-                else {
-                    // remove the key
-                    API_key.remove({api_key: body.api_key, email: email}, function (err, removed) {
-                        if (err) {
-                            res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
-                        }
-                        else {
-                            // return the deleted object
-                            res.status(200).json(removed);
-                        }
-                    });
-                }
-
-            });
-        }, (errCode) => {
-            res.status(403).json({});
-        });
-
-    });
-
-
     /**
      * Generates a new device token and returns a new DeviceToken object
      * @param deviceID - id of a device token is generated for
      */
-     function generateDeviceToken (deviceID) {
+    function generateDeviceToken(deviceID) {
         let token = crypto.randomBytes(config.database.deviceTokenLength).toString('hex');
-         return new DeviceToken({
+        return new DeviceToken({
             id: deviceID,
             token: token,
         });
@@ -178,7 +66,7 @@ module.exports = function (app, _) {
                                     DeviceToken.remove({
                                         id: device.id,
                                         created_at: {$lt: newDeviceToken.created_at}
-                                        }, function (err) {
+                                    }, function (err) {
                                         if (err) {
                                             res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                                         } else {
@@ -320,7 +208,7 @@ module.exports = function (app, _) {
 
         authenticateUser(body.token).then((email) => {
 
-            Device.findOne({id:body.id}, function (err, device) {
+            Device.findOne({id: body.id}, function (err, device) {
                 if (err) {
                     res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                 }
