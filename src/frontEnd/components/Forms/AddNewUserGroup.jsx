@@ -2,7 +2,7 @@ import React from 'react';
 
 import InputLabelForm from './InputLabelForm.jsx';
 import FormButtons from '../Buttons/FormButtons.jsx';
-import {sendPostRequest} from '../../helpers/HTTP_requests.js';
+import {sendPostRequest, sendPutRequest} from '../../helpers/HTTP_requests.js';
 
 
 export default class AddNewUserGroup extends React.Component {
@@ -10,10 +10,14 @@ export default class AddNewUserGroup extends React.Component {
     constructor(props) {
         super(props);
 
+        let editData = this.props.editData;
+
         this.state = {
-            name: "",
-            description: "",
-            permissions: "",
+            editData: editData,
+
+            name: editData === null ? "" : editData.name,
+            description: editData === null ? "" : editData.description,
+            permissions: editData === null ? "" : editData.permissions,
 
             errorMsg: null,
             nameRequired: null,
@@ -46,19 +50,32 @@ export default class AddNewUserGroup extends React.Component {
             name: this.state.name,
             description: this.state.description,
             permissions: 666,// this.state.permissions,
-            //path: this.state.path,
         };
 
         this.setState({pending: true});
         console.log("submitting", data);
 
-        sendPostRequest("CREATE_USER_GROUP", data).then((res) => {
-            console.log("created", JSON.parse(res.text));
-            this.setState({pending: false});
-            this.props.cancel()
-        }, (err) => {
-            this.setState({errorMsg: JSON.parse(err.text).msg, pending: false});
-        });
+        if (this.state.editData === null) {
+            // create a new group
+            sendPostRequest("CREATE_USER_GROUP", data).then((res) => {
+                console.log("created", JSON.parse(res.text));
+                this.setState({pending: false});
+                this.props.cancel()
+            }, (err) => {
+                this.setState({errorMsg: JSON.parse(err.text).msg, pending: false});
+            });
+        }
+        else {
+            // update the group
+            data['id'] = this.state.editData._id;
+            sendPutRequest("UPDATE_USER_GROUP", data).then((res) => {
+                console.log("created", JSON.parse(res.text));
+                this.setState({pending: false});
+                this.props.cancel()
+            }, (err) => {
+                this.setState({errorMsg: JSON.parse(err.text).msg, pending: false});
+            });
+        }
     }
 
     render() {
@@ -69,7 +86,7 @@ export default class AddNewUserGroup extends React.Component {
                 <form style={{clear: "both"}}>
                     <InputLabelForm label="Group Name"
                                     type="text"
-                                    //placeholder={this.state.firstName}
+                                    placeholder={this.state.name}
                                     required={true}
                                     validity={this.state.nameRequired}
                                     onBlur={this.checkValidity.bind(this, "name")}
@@ -77,12 +94,12 @@ export default class AddNewUserGroup extends React.Component {
                     />
                     <InputLabelForm label="Description"
                                     type="text"
-                                    //placeholder={this.state.firstName}
+                                    placeholder={this.state.description}
                                     onChange={this.handlerOnChange.bind(this, "description")}
                     />
                     <InputLabelForm label="Permissions"
                                     type="text"
-                                    //placeholder={this.state.firstName}
+                                    placeholder={this.state.permissions}
                                     onChange={this.handlerOnChange.bind(this, "permissions")}
                                     //help={PermissionsHelp}
                     />

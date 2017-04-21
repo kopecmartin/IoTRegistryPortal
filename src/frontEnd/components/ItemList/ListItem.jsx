@@ -1,8 +1,9 @@
 import React from 'react';
 import AdditionalInfo from './AdditionalInfo.jsx';
+import DropDown from '../Dropdown/DropDown.jsx';
 
 
-const ListItem = ({data, additionalInfo=false, onClick}) => {
+const ListItem = ({data, additionalInfo=false, onClick, dropDownOptions}) => {
 
     const clickedItem = () => {
         if (onClick !== undefined && onClick !== null) {
@@ -10,26 +11,40 @@ const ListItem = ({data, additionalInfo=false, onClick}) => {
         }
     };
 
+    const clickedDropDownItem = (func) => {
+        // call items function with data variable
+        // so that the row on which was action called cab be identified
+        func(data)
+    };
+
+    let arr = [];
+    if (dropDownOptions !== null) {
+        for(let i=0; i < dropDownOptions.length; i++) {
+            arr.push(
+                {title: dropDownOptions[i].title, onClick: clickedDropDownItem.bind(this, dropDownOptions[i].onClick)}
+            )
+
+        }
+    }
+
+    /*
+    <div className="list-view-pf-checkbox">
+        <input type="checkbox"/>
+    </div>
+    */
+
     return (
         <div className="list-group-item" onClick={clickedItem}>
-            <div className="list-view-pf-checkbox">
-                <input type="checkbox"/>
-            </div>
-            <div className="list-view-pf-actions">
-                <div className="dropdown pull-right dropdown-kebab-pf">
-                    <button className="btn btn-link dropdown-toggle" type="button" id="dropdownKebabRight9"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <span className="fa fa-ellipsis-v"/>
-                    </button>
-                    <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight9">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" className="divider"/>
-                        <li><a href="#">Separated link</a></li>
-                    </ul>
-                </div>
-            </div>
+
+            {
+                dropDownOptions !== null ?
+                    <div className="list-view-pf-actions">
+                        <DropDown items={arr}/>
+                    </div>
+                    :
+                    null
+            }
+
             <div className="list-view-pf-main-info">
                 <div className="list-view-pf-left">
                     <span className="fa fa-plane list-view-pf-icon-sm"/>

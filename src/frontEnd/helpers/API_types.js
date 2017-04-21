@@ -3,7 +3,7 @@
  */
 
 // TODO create a config for frontend and store address there
-const HOSTNAME = "http://192.168.0.108:3000/";
+const HOSTNAME = "http://192.168.0.100:3000/";
 
 const API_types = {
     LOGIN: HOSTNAME + "login",
