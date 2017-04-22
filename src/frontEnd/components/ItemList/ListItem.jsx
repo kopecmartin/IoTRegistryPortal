@@ -3,7 +3,7 @@ import AdditionalInfo from './AdditionalInfo.jsx';
 import DropDown from '../Dropdown/DropDown.jsx';
 
 
-const ListItem = ({data, additionalInfo=false, onClick, dropDownOptions}) => {
+const ListItem = ({data, additionalInfo = false, onClick, dropDownOptions}) => {
 
     const clickedItem = () => {
         if (onClick !== undefined && onClick !== null) {
@@ -19,7 +19,7 @@ const ListItem = ({data, additionalInfo=false, onClick, dropDownOptions}) => {
 
     let arr = [];
     if (dropDownOptions !== null) {
-        for(let i=0; i < dropDownOptions.length; i++) {
+        for (let i = 0; i < dropDownOptions.length; i++) {
             arr.push(
                 {title: dropDownOptions[i].title, onClick: clickedDropDownItem.bind(this, dropDownOptions[i].onClick)}
             )
@@ -39,7 +39,11 @@ const ListItem = ({data, additionalInfo=false, onClick, dropDownOptions}) => {
             {
                 dropDownOptions !== null ?
                     <div className="list-view-pf-actions">
-                        <DropDown items={arr}/>
+                        <DropDown button={
+                            <button className="btn btn-link dropdown-toggle">
+                                <span className="fa fa-ellipsis-v"/>
+                            </button>
+                        } items={arr}/>
                     </div>
                     :
                     null

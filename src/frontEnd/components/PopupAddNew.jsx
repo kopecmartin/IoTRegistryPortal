@@ -19,7 +19,8 @@ export default class PopupAddNew extends React.Component {
     render() {
         const style = {
             height: '300px',
-            overflow: 'scroll',
+            overflow: 'auto',
+            overflowX: 'hidden',
         };
 
         return (

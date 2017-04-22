@@ -9,6 +9,7 @@ import Devices from './frontEnd/views/Devices.jsx';
 import Layout from './frontEnd/Layout.jsx';
 import LoginPage from './frontEnd/views/LoginPage.jsx';
 import NotFound from './frontEnd/views/NotFound.jsx';
+import Preferences from './frontEnd/views/Preferences.jsx';
 import PreLoginLayout from './frontEnd/PreLoginLayout.jsx';
 import Registration from './frontEnd/views/Registration.jsx';
 import Settings from './frontEnd/views/Settings.jsx';
@@ -35,6 +36,7 @@ ReactDOM.render(
                     <Route path="/portal/registration" component={Registration}/>
                     <Route path="/portal/danger" component={DangerZone}/>
                     <Route path="/portal/settings" component={Settings}/>
+                    <Route path="/portal/preferences" component={Preferences}/>
                     <Route path="*" component={NotFound}/>
                 </Route>
             </Route>

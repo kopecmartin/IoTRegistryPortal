@@ -132,11 +132,42 @@ module.exports = function (app, _) {
 
     });
 
+    app.post('/getUserInfo', function (req, res) {
+
+        // retrieve information
+        let body = _.pick(req.body, 'token');
+
+        authenticateUser(body.token).then((email) => {
+
+            // try find user's email in the database
+            User.findOne({email: email}, function (err, user) {
+                if (err) {
+                    res.status(403).json({   // forbidden
+                        msg: getTranslation(messageTypes.NAME_PASSWORD_INCORRECT)
+                    });
+                }
+                else if (!user) {
+                    res.status(403).json({   // forbidden
+                        msg: getTranslation(messageTypes.NAME_PASSWORD_INCORRECT)
+                    });
+                }
+                else {
+                    // then check the password
+                    // TODO don't send the password, connected to hash passwords task
+                    res.status(200).json(user);
+                }
+            });
+
+        }, (errCode) => {
+            res.status(403).json({});
+        });
+    });
+
 
     app.put('/updateUser', function (req, res) {
 
         // retrieve information
-        let body = _.pick(req.body, 'token', 'password', 'name', 'firstName', 'lastName', 'age', 'gender');
+        let body = _.pick(req.body, 'token', 'name', 'firstName', 'lastName', 'age', 'gender');
 
         authenticateUser(body.token).then((email) => {
 
@@ -152,9 +183,6 @@ module.exports = function (app, _) {
                     if (body.name) {
                         user.name = body.name;
                     }
-                    if (body.password) {
-                        user.password = body.password;  // TODO hash passwords
-                    }
                     if (body.firstName) {
                         user.meta.firstName = body.firstName;
                     }
@@ -168,7 +196,7 @@ module.exports = function (app, _) {
                         user.meta.gender = body.gender;
                     }
                     // if something was updated
-                    if (body.name || body.password || body.firstName || body.lastName || body.age || body.gender) {
+                    if (body.name || body.firstName || body.lastName || body.age || body.gender) {
                         user.updated_at = new Date();
                         user.save(function (err) {
                             if (err) {
@@ -188,13 +216,19 @@ module.exports = function (app, _) {
         });
     });
 
+    app.post('/changePassword', function (req, res) {
 
-    // For debug purposes
-    app.post('/getUsers', function (req, res) {
+        // retrieve information
+        let body = _.pick(req.body, 'token', 'password', 'newPassword');
 
-        User.find({}, function (err, users) {
-            res.status(200).json(users);
+        authenticateUser(body.token).then((email) => {
+
+            // TODO change password
+
+        }, (errCode) => {
+            res.status(403).json({});
         });
     });
+
 
 };

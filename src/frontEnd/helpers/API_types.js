@@ -7,7 +7,12 @@ const HOSTNAME = "http://192.168.0.100:3000/";
 
 const API_types = {
     LOGIN: HOSTNAME + "login",
+    LOGOUT: HOSTNAME + "logout",
     REGISTER: HOSTNAME + "register",
+
+    GET_USER_INFO: HOSTNAME + "getUserInfo",
+    UPDATE_USER_INFO: HOSTNAME + "updateUser",
+    CHANGE_PASSWORD: HOSTNAME + "changePassword",
 
     CREATE_USER_GROUP: HOSTNAME + "userGroup",
     UPDATE_USER_GROUP: HOSTNAME + "userGroup",

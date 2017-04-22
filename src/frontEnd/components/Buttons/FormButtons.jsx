@@ -15,8 +15,24 @@ export default class FormButtons extends React.Component {
 
         return (
             <div className='btn-toolbar form-actions' style={{marginTop: 35}}>
-                <button type="button" className="btn btn-secondary" onClick={this.props.cancel}>Cancel</button>
-                <button type="button" className="btn btn-primary" onClick={this.props.submit}>Submit</button>
+                {
+                    this.props.cancel === undefined ?
+                        null
+                        :
+                        <button type="button"
+                                className="btn btn-secondary"
+                                onClick={this.props.cancel}>
+                            Cancel
+                        </button>
+                }
+
+
+                <button type="button"
+                        className="btn btn-primary"
+                        onClick={this.props.submit}>
+                    {this.props.submit_title || "Submit"}
+                </button>
+
                 {this.props.pending ? <Loading form={true}/> : null}
                 {errorMsg}
             </div>
