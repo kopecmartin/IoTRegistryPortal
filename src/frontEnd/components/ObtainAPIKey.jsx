@@ -2,8 +2,10 @@ import React from 'react';
 
 import CountDownClock from '../components/CountDownClock.jsx';
 
+import { connect } from 'react-redux'
 
-const ObtainAPIKey = ({getApiKey, deleteApiKey, extendApiKeyLife, APIKeyObject, timedOut}) => {
+
+const ObtainAPIKey = ({APIKeyObject, buttons, deleteApiKey, extendApiKeyLife, getApiKey, timedOut}) => {
     const buttonStyle = {
         marginTop: 40
     };
@@ -39,19 +41,19 @@ const ObtainAPIKey = ({getApiKey, deleteApiKey, extendApiKeyLife, APIKeyObject, 
                         <button className="btn btn-primary btn-lg "
                                 type="button"
                                 onClick={getApiKey}>
-                            Generate
+                            {buttons.generate}
                         </button>
                         :
                         <div>
                             <button className="btn btn-danger btn-lg"
                                     type="button"
                                     onClick={deleteApiKey}>
-                                Expire
+                                {buttons.expire}
                             </button>
                             <button className="btn btn-info btn-lg "
                                     type="button"
                                     onClick={extendApiKeyLife}>
-                                Extend Expiration
+                                {buttons.extendExpiration}
                             </button>
                         </div>
                 }
@@ -60,4 +62,9 @@ const ObtainAPIKey = ({getApiKey, deleteApiKey, extendApiKeyLife, APIKeyObject, 
     )
 };
 
-export default ObtainAPIKey;
+export default connect(
+    (state) => ({
+        buttons: state.switchLanguage.content.buttons,
+    }),
+   null
+)(ObtainAPIKey)

@@ -2,12 +2,14 @@ import React from 'react';
 
 import UserInformation from '../components/Forms/UserInformation.jsx';
 
+import { connect } from 'react-redux'
 
-const Preferences = () => {
+
+const Preferences = ({content}) => {
 
     return (
         <div>
-            <h1>Preferences</h1>
+            <h1>{content.preferences}</h1>
 
             <UserInformation/>
 
@@ -16,4 +18,9 @@ const Preferences = () => {
 
 };
 
-export default Preferences;
+export default connect(
+    (state) => ({
+        content: state.switchLanguage.content.page.preferences,
+    }),
+    null
+)(Preferences)

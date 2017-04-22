@@ -5,8 +5,10 @@ import PopupAddNew from '../components/PopupAddNew.jsx';
 import UpperToolbar from '../components/UpperToolbar.jsx';
 import ShowInfluxDBs from '../components/ShowInfluxDBs.jsx';
 
+import {connect} from 'react-redux';
 
-export default class Databases extends React.Component {
+
+class Databases extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -22,14 +24,13 @@ export default class Databases extends React.Component {
 
     addNewItemTrigger() {
         this.setState({addNewItemClicked: !this.state.addNewItemClicked});
-        this.fetchOwnDatabases();  // TODO optimization - this is now triggered always
     }
 
     render() {
 
         return (
             <div>
-                <h1>Influx Databases</h1>
+                <h1>{this.props.content.influxDBs}</h1>
                 <UpperToolbar addNewItemTrigger={this.addNewItemTrigger.bind(this)}/>
 
                <ShowInfluxDBs onClick={this.clickedItem.bind(this)}/>
@@ -37,7 +38,7 @@ export default class Databases extends React.Component {
                 {
                     this.state.addNewItemClicked ?
                         <PopupAddNew close={this.addNewItemTrigger.bind(this)}
-                                     title="Create a new Influx database">
+                                     title={this.props.content.createNew}>
                             <NewInfluxDB cancel={this.addNewItemTrigger.bind(this)}/>
                         </PopupAddNew>
                         :
@@ -46,4 +47,11 @@ export default class Databases extends React.Component {
             </div>
         )
     }
-};
+}
+
+export default connect(
+    (state) => ({
+        content: state.switchLanguage.content.page.databases,
+    }),
+    null
+)(Databases)

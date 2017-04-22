@@ -4,8 +4,10 @@ import InputLabelForm from './InputLabelForm.jsx';
 import FormButtons from '../Buttons/FormButtons.jsx';
 import {sendPostRequest} from '../../helpers/HTTP_requests.js';
 
+import { connect } from 'react-redux'
 
-export default class AddNewDeviceGroup extends React.Component {
+
+class AddNewDeviceGroup extends React.Component {
 
     constructor(props) {
         super(props);
@@ -66,33 +68,41 @@ export default class AddNewDeviceGroup extends React.Component {
         return (
             <div>
                 <form style={{clear: "both"}}>
-                    <InputLabelForm label="Group Name"
+                    <InputLabelForm label={this.props.content.groupName}
                                     type="text"
-                        //placeholder={this.state.firstName}
                                     required={true}
                                     validity={this.state.nameRequired}
                                     onBlur={this.checkValidity.bind(this, "name")}
                                     onChange={this.handlerOnChange.bind(this, "name")}
                     />
-                    <InputLabelForm label="Description"
+                    <InputLabelForm label={this.props.content.description}
                                     type="text"
-                        //placeholder={this.state.firstName}
                                     onChange={this.handlerOnChange.bind(this, "description")}
                     />
-                    <InputLabelForm label="Path"
+                    <InputLabelForm label={this.props.content.path}
                                     type="text"
-                        //placeholder={this.state.firstName}
                                     onChange={this.handlerOnChange.bind(this, "path")}
-                        //help={PermissionsHelp}
                     />
                 </form>
 
                 <FormButtons submit={this.handlerSubmitBtn.bind(this)}
                              cancel={this.props.cancel}
-                             errorMsg={this.state.nameRequired ? required : this.state.errorMsg}
+                             errorMsg={
+                                 this.state.nameRequired ?
+                                     this.props.warnings.requiredFields
+                                     :
+                                     this.state.errorMsg}
                              pending={this.state.pending}
                 />
             </div>
         )
     }
-};
+}
+
+export default connect(
+    (state) => ({
+        content: state.switchLanguage.content.forms,
+        warnings: state.switchLanguage.content.warnings,
+    }),
+    null
+)(AddNewDeviceGroup)

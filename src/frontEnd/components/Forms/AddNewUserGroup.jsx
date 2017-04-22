@@ -4,8 +4,10 @@ import InputLabelForm from './InputLabelForm.jsx';
 import FormButtons from '../Buttons/FormButtons.jsx';
 import {sendPostRequest, sendPutRequest} from '../../helpers/HTTP_requests.js';
 
+import { connect } from 'react-redux'
 
-export default class AddNewUserGroup extends React.Component {
+
+class AddNewUserGroup extends React.Component {
 
     constructor(props) {
         super(props);
@@ -84,7 +86,7 @@ export default class AddNewUserGroup extends React.Component {
         return (
             <div>
                 <form style={{clear: "both"}}>
-                    <InputLabelForm label="Group Name"
+                    <InputLabelForm label={this.props.content.groupName}
                                     type="text"
                                     placeholder={this.state.name}
                                     required={true}
@@ -92,25 +94,36 @@ export default class AddNewUserGroup extends React.Component {
                                     onBlur={this.checkValidity.bind(this, "name")}
                                     onChange={this.handlerOnChange.bind(this, "name")}
                     />
-                    <InputLabelForm label="Description"
+                    <InputLabelForm label={this.props.content.description}
                                     type="text"
                                     placeholder={this.state.description}
                                     onChange={this.handlerOnChange.bind(this, "description")}
                     />
-                    <InputLabelForm label="Permissions"
+                    <InputLabelForm label={this.props.content.permissions}
                                     type="text"
                                     placeholder={this.state.permissions}
                                     onChange={this.handlerOnChange.bind(this, "permissions")}
-                                    //help={PermissionsHelp}
                     />
                 </form>
 
                 <FormButtons submit={this.handlerSubmitBtn.bind(this)}
                              cancel={this.props.cancel}
-                             errorMsg={this.state.nameRequired ? required : this.state.errorMsg}
+                             errorMsg={
+                                 this.state.nameRequired ?
+                                     this.props.warnings.requiredFields
+                                     :
+                                     this.state.errorMsg}
                              pending={this.state.pending}
                 />
             </div>
         )
     }
-};
+}
+
+export default connect(
+    (state) => ({
+        content: state.switchLanguage.content.forms,
+        warnings: state.switchLanguage.content.warnings,
+    }),
+    null
+)(AddNewUserGroup)

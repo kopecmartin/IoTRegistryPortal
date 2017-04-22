@@ -49,7 +49,7 @@ class Register extends React.Component {
                                     onClick={this.props.register}
                                     className="btn btn-primary btn-lg"
                                     tabIndex="4">
-                                {this.props.content.buttons.register}
+                                {this.props.buttons.register}
                             </button>
                         </div>
                     </form>
@@ -61,7 +61,7 @@ class Register extends React.Component {
                                 onClick={this.props.toggle}
                                 className="btn btn-primary btn-lg"
                                 tabIndex="4">
-                            {this.props.content.buttons.login}
+                            {this.props.buttons.login}
                         </button>
                     </div>
                 </div>
@@ -71,6 +71,9 @@ class Register extends React.Component {
 }
 
 export default connect(
-    (state) => ({content: state.switchLanguage.content.page.login}),
+    (state) => ({
+        buttons: state.switchLanguage.content.buttons,
+        content: state.switchLanguage.content.page.login
+    }),
     null
 )(Register)

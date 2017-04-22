@@ -4,8 +4,10 @@ import List from './ItemList/List.jsx';
 import Loading from './Loading.jsx';
 import {sendPostRequest} from '../helpers/HTTP_requests.js';
 
+import {connect} from 'react-redux';
 
-export default class ShowInfluxDBs extends React.Component {
+
+class ShowInfluxDBs extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -41,13 +43,20 @@ export default class ShowInfluxDBs extends React.Component {
 
         return (
             <div style={style}>
-                <h2>My Databases</h2>
+                <h2>{this.props.myDatabases}</h2>
                 {this.state.pendingOwnDatabases ? <Loading/> : <List onClick={this.props.onClick}
                                                                      data={this.state.ownDatabases}/>}
-                <h2>Other Databases</h2>
+                <h2>{this.props.otherDatabases}</h2>
                 {this.state.pendingOtherDatabases ? <Loading/> : <List onClick={this.props.onClick}
                                                                        data={this.state.otherDatabases}/>}
             </div>
         )
     }
 }
+
+export default connect(
+    (state) => ({
+        content: state.switchLanguage.content.page.databases,
+    }),
+    null
+)(ShowInfluxDBs)

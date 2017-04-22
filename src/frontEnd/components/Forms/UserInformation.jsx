@@ -4,8 +4,10 @@ import InputLabelForm from './InputLabelForm.jsx';
 import FormButtons from '../Buttons/FormButtons.jsx';
 import {sendPostRequest, sendPutRequest} from '../../helpers/HTTP_requests.js';
 
+import {connect} from 'react-redux'
 
-export default class UserInformation extends React.Component {
+
+class UserInformation extends React.Component {
 
     constructor(props) {
         super(props);
@@ -97,7 +99,7 @@ export default class UserInformation extends React.Component {
         else {
             this.setState({
                 passwordFieldError: "has-error",
-                errorMsg: "Passwords don't match!",
+                errorMsg: this.props.warnings.passwordsNotMatch,
             });
         }
     }
@@ -113,32 +115,32 @@ export default class UserInformation extends React.Component {
             <div style={{padding: 15}}>
                 <h2>Personal information</h2>
                 <form style={{clear: "both", padding: 10}}>
-                    <InputLabelForm label="Email"
+                    <InputLabelForm label={this.props.content.email}
                                     type="text"
                                     disabled="disabled"
                                     placeholder={this.state.userData.email}
                     />
-                    <InputLabelForm label="Name"
+                    <InputLabelForm label={this.props.content.name}
                                     type="text"
                                     placeholder={this.state.userData.name}
                                     onChange={this.handlerOnChange.bind(this, "name")}
                     />
-                    <InputLabelForm label="First Name"
+                    <InputLabelForm label={this.props.content.firstName}
                                     type="text"
                                     placeholder={this.state.meta.firstName}
                                     onChange={this.handlerOnChange.bind(this, "firstName")}
                     />
-                    <InputLabelForm label="Last Name"
+                    <InputLabelForm label={this.props.content.lastName}
                                     type="text"
                                     placeholder={this.state.meta.lastName}
                                     onChange={this.handlerOnChange.bind(this, "lastName")}
                     />
-                    <InputLabelForm label="Age"
+                    <InputLabelForm label={this.props.content.age}
                                     type="text"
                                     placeholder={this.state.meta.age}
                                     onChange={this.handlerOnChange.bind(this, "age")}
                     />
-                    <InputLabelForm label="Gender"
+                    <InputLabelForm label={this.props.content.gender}
                                     type="text"
                                     placeholder={this.state.meta.gender}
                                     onChange={this.handlerOnChange.bind(this, "gender")}
@@ -147,7 +149,7 @@ export default class UserInformation extends React.Component {
 
                 <h2>Password Change</h2>
                 <form style={{clear: "both", padding: 10}}>
-                    <InputLabelForm label="Current Password"
+                    <InputLabelForm label={this.props.content.currentPassword}
                                     type="password"
                                     placeholder={this.state.password}
                                     onChange={this.handlerOnChange.bind(this, "password")}
@@ -155,13 +157,13 @@ export default class UserInformation extends React.Component {
                     {
                         this.state.password !== "" ?
                             <div>
-                                <InputLabelForm label="New Password"
+                                <InputLabelForm label={this.props.content.newPassword}
                                                 type="password"
                                                 placeholder={this.state.newPassword}
                                                 onBlur={this.checkPasswordValidity.bind(this)}
                                                 onChange={this.handlerOnChange.bind(this, "newPassword")}
                                 />
-                                <InputLabelForm label="Confirm New Password"
+                                <InputLabelForm label={this.props.content.confirmNewPassword}
                                                 type="password"
                                                 placeholder={this.state.confirmPassword}
                                                 validity={this.state.passwordFieldError}
@@ -176,11 +178,20 @@ export default class UserInformation extends React.Component {
                 </form>
 
                 <FormButtons submit={this.updateUserInfo.bind(this)}
-                             submit_title="Save"
+                             submit_title={this.props.buttons.save}
                              errorMsg={this.state.errorMsg}
                              pending={this.state.pending}
                 />
             </div>
         )
     }
-};
+}
+
+export default connect(
+    (state) => ({
+        buttons: state.switchLanguage.content.buttons,
+        content: state.switchLanguage.content.forms,
+        warnings: state.switchLanguage.content.warnings,
+    }),
+    null
+)(UserInformation)

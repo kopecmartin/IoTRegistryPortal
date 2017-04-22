@@ -7,8 +7,10 @@ import PopupAddNew from '../components/PopupAddNew.jsx';
 import {sendPostRequest, sendDeleteRequest} from '../helpers/HTTP_requests.js';
 import UpperToolbar from '../components/UpperToolbar.jsx';
 
+import {connect} from 'react-redux'
 
-export default class UserGroups extends React.Component {
+
+class UserGroups extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -78,21 +80,21 @@ export default class UserGroups extends React.Component {
             paddingTop: 20,
         };
         let rowActions = [
-            {title: "update", onClick: this.itemAction.bind(this, "update")},
-            {title: "delete", onClick: this.itemAction.bind(this, "delete")}
+            {title: this.props.dropDowns.edit, onClick: this.itemAction.bind(this, "update")},
+            {title: this.props.dropDowns.delete, onClick: this.itemAction.bind(this, "delete")}
             ];
 
         return (
             <div>
-                <h1>User Groups</h1>
+                <h1>{this.props.content.userGroups}</h1>
                 <UpperToolbar addNewItemTrigger={this.addNewItemTrigger.bind(this, true)}/>
 
                 <div style={style}>
-                    <h2>My Groups</h2>
+                    <h2>{this.props.content.myGroups}</h2>
                     {this.state.pendingOwnGroups ? <Loading/> : <List data={this.state.ownGroupsData}
                                                                       dropDownOptions={rowActions}
                                                                       additionalInfo={true}/>}
-                    <h2>Member in</h2>
+                    <h2>{this.props.content.memberIn}</h2>
                     {this.state.pendingOtherGroups ? <Loading/> : <List data={this.state.memberInGroupsData}
                                                                         additionalInfo={true}/>}
                 </div>
@@ -101,9 +103,9 @@ export default class UserGroups extends React.Component {
                     this.state.addNewItemClicked || this.state.editData !== null ?
                     <PopupAddNew close={this.addNewItemTrigger.bind(this, false)}
                                  title={this.state.editData === null ?
-                                     "Create a new user group"
+                                     this.props.content.createNew
                                      :
-                                     "Update the user group"}>
+                                     this.props.content.updateGroup}>
                         <NewGroupForm editData={this.state.editData}
                                       cancel={this.addNewItemTrigger.bind(this, false)}/>
                     </PopupAddNew>
@@ -114,4 +116,12 @@ export default class UserGroups extends React.Component {
             </div>
         )
     }
-};
+}
+
+export default connect(
+    (state) => ({
+        content: state.switchLanguage.content.page.userGroups,
+        dropDowns: state.switchLanguage.content.dropDowns,
+    }),
+    null
+)(UserGroups)

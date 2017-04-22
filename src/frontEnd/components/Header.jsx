@@ -9,7 +9,7 @@ import {connect} from 'react-redux'
 let actions = require('./../actions/actions.js');
 
 
-const Header = ({changeSite}) => {
+const Header = ({changeSite, dropDowns}) => {
     const iconStyle = {
         "color": "#fff",
         "fontSize": 20,
@@ -39,8 +39,8 @@ const Header = ({changeSite}) => {
     };
 
     const items = [
-        {title: "Preferences", onClick: preferences},
-        {title: "Logout", onClick: logout},
+        {title: dropDowns.preferences, onClick: preferences},
+        {title: dropDowns.logout, onClick: logout},
     ];
 
     return (
@@ -64,6 +64,8 @@ const Header = ({changeSite}) => {
 };
 
 export default connect(
-    null,
+    (state) => ({
+        dropDowns: state.switchLanguage.content.dropDowns,
+    }),
     (dispatch) => ({changeSite: (site) => dispatch(actions.changeSite(site))})
 )(Header)

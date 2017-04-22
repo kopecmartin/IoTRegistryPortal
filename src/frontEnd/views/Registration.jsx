@@ -7,6 +7,8 @@ import ObtainAPIKey from '../components/ObtainAPIKey.jsx';
 import PopupAddNew from '../components/PopupAddNew.jsx';
 import {sendPostRequest, sendDeleteRequest, sendPutRequest} from '../helpers/HTTP_requests.js';
 
+import {connect} from 'react-redux';
+
 
 class Registration extends React.Component {
 
@@ -71,26 +73,26 @@ class Registration extends React.Component {
         let timedOutMsg = (
             <strong className="form-text alert alert-danger"
                                   style={{marginLeft: "40%"}}>
-                The API key has expired, generate new one.
+                {this.props.warnings.apiExpired}
             </strong>
         );
 
         return (
             <div>
-                <h1>Registration</h1>
+                <h1>{this.props.content.registration}</h1>
 
-                <h2>Step 1</h2>
-                <p>Associate an Influx database with a device.</p>
+                <h2>{this.props.content.step1}</h2>
+                <p>{this.props.content.step1Info}</p>
                 <InputLabelFormat required={true}
-                                  help="Choose a database where a device will send measurements to."
+                                  help={this.props.content.step1Help}
                                   onClick={this.addDatabaseTrigger.bind(this)}
-                                  label="Influx Database"/>
+                                  label={this.props.content.influxDB}/>
 
                 {
                     this.state.databaseName !== "" ?
                         <div>
-                            <h2>Step 2</h2>
-                            <p>Generate an API key for a device.</p>
+                            <h2>{this.props.content.step2}</h2>
+                            <p>{this.props.content.step2Info}</p>
                             <ObtainAPIKey getApiKey={this.getAPIKey.bind(this)}
                                           deleteApiKey={this.deleteAPIKey.bind(this)}
                                           extendApiKeyLife={this.extendAPIKeyLife.bind(this)}
@@ -107,13 +109,13 @@ class Registration extends React.Component {
                         null
                         :
                         <div>
-                            <h2>Step 3</h2>
-                            <p>Now you have all information needed for device registration.</p>
+                            <h2>{this.props.content.step3}</h2>
+                            <p>{this.props.content.step3Info}</p>
                             <Highlight lang="javascript"
                                        value={
                                            "{\n"+
-                                           "\tid: // Your device's ID\n" +
-                                           "\tioFeatures: // Schema of your device's input/output features\n" +
+                                           "\tid: // " + this.props.content.idHelp + "\n" +
+                                           "\tioFeatures: // " + this.props.content.ioFeaturesHelp + "\n" +
                                            "\tAPIKey:" + this.state.APIKeyObject.api_key+"\n" +
                                            "}"
                                        }
@@ -125,7 +127,7 @@ class Registration extends React.Component {
                 {
                     this.state.addInfluxDB ?
                         <PopupAddNew close={this.addDatabaseTrigger.bind(this)}
-                                     title="Associate a database">
+                                     title={this.props.content.associateDB}>
                             <AssociateDB onClick={this.clickedItem.bind(this)}/>
                         </PopupAddNew>
                         :
@@ -136,4 +138,10 @@ class Registration extends React.Component {
     }
 }
 
-export default Registration;
+export default connect(
+    (state) => ({
+        content: state.switchLanguage.content.page.registration,
+        warnings: state.switchLanguage.content.warnings,
+    }),
+    null
+)(Registration)

@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 let actions = require('./../../actions/actions.js');
 
 
-const Login = ({usernameOnChange, passwordOnChange, login, toggle, content, switchLanguage}) => {
+const Login = ({usernameOnChange, passwordOnChange, login, toggle, content, buttons, switchLanguage}) => {
 
     /*
     const switchL = () => {
@@ -33,7 +33,7 @@ const Login = ({usernameOnChange, passwordOnChange, login, toggle, content, swit
                                     onClick={login}
                                     className="btn btn-primary btn-lg"
                                     tabIndex="4">
-                                {content.buttons.login}
+                                {buttons.login}
                             </button>
                         </div>
                     </RememberHelp>
@@ -43,15 +43,15 @@ const Login = ({usernameOnChange, passwordOnChange, login, toggle, content, swit
             <div className="col-sm-5 col-md-6 col-lg-7 details">
                 <a className="btn btn-block btn-social btn-facebook">
                     <span className="fa fa-facebook"/>
-                    {content.buttons.facebook}
+                    {buttons.facebook}
                 </a>
                 <a className="btn btn-block btn-social btn-google">
                     <span className="fa fa-google"/>
-                    {content.buttons.google}
+                    {buttons.google}
                 </a>
                 <a className="btn btn-block btn-social btn-github">
                     <span className="fa fa-github"/>
-                    {content.buttons.github}
+                    {buttons.github}
                 </a>
 
                 <div>
@@ -60,7 +60,7 @@ const Login = ({usernameOnChange, passwordOnChange, login, toggle, content, swit
                             onClick={toggle}
                             className="btn btn-primary btn-lg"
                             tabIndex="4">
-                        {content.buttons.register}
+                        {buttons.register}
                     </button>
                 </div>
             </div>
@@ -74,6 +74,9 @@ Login.propTypes = {
 };
 
 export default connect(
-    (state) => ({content: state.switchLanguage.content.page.login}),
+    (state) => ({
+        buttons: state.switchLanguage.content.buttons,
+        content: state.switchLanguage.content.page.login
+    }),
     (dispatch) => ({switchLanguage: (lang) => dispatch(actions.switchLanguage(lang))})
 )(Login)

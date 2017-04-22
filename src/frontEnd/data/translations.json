@@ -1,15 +1,47 @@
 [
   {
     "lang": "en",
+    "buttons": {
+      "expire": "Expire",
+      "extendExpiration": "Extend Expiration",
+      "facebook": "Sign Up with Facebook",
+      "generate": "Generate",
+      "github": "Sign Up with GitHub",
+      "google": "Sign Up with Google",
+      "login": "Sign In",
+      "register": "Sign Up",
+      "save": "Save"
+    },
+    "dropDowns": {
+      "delete": "Delete",
+      "edit": "Edit",
+      "logout": "Logout",
+      "preferences": "Preferences"
+    },
+    "forms": {
+      "age": "Age",
+      "confirmNewPassword": "Confirm New Password",
+      "currentPassword": "Current Password",
+      "databaseName": "Database Name",
+      "description": "Description",
+      "email": "Email",
+      "firstName":  "First Name",
+      "gender": "Gender",
+      "groupName": "Group Name",
+      "lastName": "Last Name",
+      "name": "Name",
+      "newPassword": "New Password",
+      "path": "Path",
+      "permissions": "Permissions"
+    },
     "page": {
+      "databases": {
+        "createNew": "Create a new Influx database",
+        "influxDBs": "Influx Databases",
+        "myDatabases": "My Databases",
+        "otherDatabases": "Other Databases"
+      },
       "login": {
-        "buttons": {
-          "facebook": "Sign Up with Facebook",
-          "github": "Sign Up with GitHub",
-          "google": "Sign Up with Google",
-          "login": "Sign In",
-          "register": "Sign Up"
-        },
         "labels": {
           "confirmPassword": "Confirm your password",
           "password": "Password",
@@ -22,6 +54,23 @@
           "remember": "Remember username"
         }
       },
+      "preferences": {
+        "preferences": "Preferences"
+      },
+      "registration": {
+        "associateDB": "Associate a database",
+        "influxDB": "Influx Database",
+        "registration": "Registration",
+        "step1": "Step 1",
+        "step1Info": "Associate an Influx database with a device.",
+        "step1Help": "Choose a database where a device will send measurements to.",
+        "step2": "Step 2",
+        "step2Info": "Generate an API key for a device.",
+        "step3": "Step3",
+        "step3Info": "Now you have all information needed for device registration.",
+        "idHelp": "Your device's ID",
+        "ioFeaturesHelp": "Schema of your device's input/output features"
+      },
       "sidebar": {
         "dangerZone": "Danger Zone",
         "dashboard": "Dashboard",
@@ -32,15 +81,16 @@
         "userGroups": "User Groups"
       },
       "userGroups": {
-        "headers": {
-          "name": "Group Name",
-          "description": "Description",
-          "membersNo": "Members No.",
-          "subgroups": "Subgroups No."
-        }
+        "createNew": "Create a new user group",
+        "updateGroup":  "Update the user group",
+        "userGroups": "User Groups",
+        "myGroups": "My Groups",
+        "memberIn": "Member in"
       }
     },
     "warnings": {
+      "apiExpired": "The API key has expired, generate new one.",
+      "passwordsNotMatch": "Passwords don't match!",
       "requiredFields": "Fill all required fields!"
     }
   }
