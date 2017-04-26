@@ -10,11 +10,12 @@ import {connect} from 'react-redux';
 
 class Databases extends React.Component {
 
-    constructor(props, context) {
-        super(props, context);
+    constructor(props) {
+        super(props);
 
         this.state = {
             addNewItemClicked: false,
+            updateSignal: 0,
         }
     }
 
@@ -23,7 +24,10 @@ class Databases extends React.Component {
     }
 
     addNewItemTrigger() {
-        this.setState({addNewItemClicked: !this.state.addNewItemClicked});
+        this.setState({
+            addNewItemClicked: !this.state.addNewItemClicked,
+            updateSignal: 1
+        });
     }
 
     render() {
@@ -33,7 +37,7 @@ class Databases extends React.Component {
                 <h1>{this.props.content.influxDBs}</h1>
                 <UpperToolbar addNewItemTrigger={this.addNewItemTrigger.bind(this)}/>
 
-               <ShowInfluxDBs onClick={this.clickedItem.bind(this)}/>
+               <ShowInfluxDBs update={this.state.updateSignal} onClick={this.clickedItem.bind(this)}/>
 
                 {
                     this.state.addNewItemClicked ?

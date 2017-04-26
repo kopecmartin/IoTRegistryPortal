@@ -9,10 +9,11 @@ import {connect} from 'react-redux';
 
 class ShowInfluxDBs extends React.Component {
 
-    constructor(props, context) {
-        super(props, context);
+    constructor(props) {
+        super(props);
 
         this.state = {
+
             pendingOwnDatabases: false,
             pendingOtherDatabases: false,
             ownDatabases: [],
@@ -23,6 +24,11 @@ class ShowInfluxDBs extends React.Component {
     componentDidMount() {
         this.fetchOwnDatabases();
     }
+
+    componentWillReceiveProps() {
+       this.fetchOwnDatabases();
+    }
+
 
     fetchOwnDatabases() {
         this.setState({pendingOwnDatabases: true});
@@ -43,10 +49,10 @@ class ShowInfluxDBs extends React.Component {
 
         return (
             <div style={style}>
-                <h2>{this.props.myDatabases}</h2>
+                <h2>{this.props.content.myDatabases}</h2>
                 {this.state.pendingOwnDatabases ? <Loading/> : <List onClick={this.props.onClick}
                                                                      data={this.state.ownDatabases}/>}
-                <h2>{this.props.otherDatabases}</h2>
+                <h2>{this.props.content.otherDatabases}</h2>
                 {this.state.pendingOtherDatabases ? <Loading/> : <List onClick={this.props.onClick}
                                                                        data={this.state.otherDatabases}/>}
             </div>

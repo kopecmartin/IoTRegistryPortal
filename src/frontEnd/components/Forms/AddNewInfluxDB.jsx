@@ -54,7 +54,7 @@ class AddNewInfluxDB extends React.Component {
         sendPostRequest("CREATE_INFLUX_DATABASE", data).then((res) => {
             console.log("created", JSON.parse(res.text));
             this.setState({pending: false});
-            this.props.cancel()
+            this.props.cancel(true); // load new data in the component
         }, (err) => {
             this.setState({errorMsg: JSON.parse(err.text).msg, pending: false});
         });

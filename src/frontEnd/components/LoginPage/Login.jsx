@@ -1,5 +1,5 @@
 import Input from './Input.jsx';
-import React , { PropTypes } from 'react';
+import React from 'react';
 import RememberHelp from './RememberHelp.jsx';
 
 import 'bootstrap-social';
@@ -66,11 +66,6 @@ const Login = ({usernameOnChange, passwordOnChange, login, toggle, content, butt
             </div>
         </div>
     )
-};
-
-Login.propTypes = {
-    //content: PropTypes.object.isRequired,
-    //switchLanguage: PropTypes.function.isRequired,
 };
 
 export default connect(

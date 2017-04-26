@@ -24,7 +24,7 @@ export default class DropDown extends React.Component {
         const createItem = this.props.items.map((item) =>
             <a key={item.title}
                style={{
-                   color: item.title === "delete" ? "red" : "black",
+                   color: item.title === "Delete" ? "red" : "black",
                }}
                onClick={item.onClick}>
                 {item.title}

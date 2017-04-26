@@ -56,7 +56,7 @@ class UserInformation extends React.Component {
         };
 
         this.setState({pending: true});
-        sendPostRequest("CHANGE_PASSWORD", {data}).then((data) => {
+        sendPostRequest("CHANGE_PASSWORD", data).then((data) => {
             console.log("password's changed", JSON.parse(data.text));
             this.setState({pending: false});
         }, (err) => {
@@ -76,7 +76,7 @@ class UserInformation extends React.Component {
         };
 
         this.setState({pending: true});
-        sendPutRequest("UPDATE_USER_INFO", {data}).then((data) => {
+        sendPutRequest("UPDATE_USER_INFO", data).then((data) => {
             console.log("updated", JSON.parse(data.text));
 
             if (this.state.newPassword !== "" && this.state.passwordFieldError === null) {

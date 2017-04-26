@@ -1,7 +1,7 @@
 import cookie from 'react-cookie';
 import { hashHistory } from 'react-router';
 import ImageLoader from 'react-imageloader';
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 import Login from '../components/LoginPage/Login.jsx';
 import Register from '../components/LoginPage/Register.jsx';
@@ -17,8 +17,8 @@ import '../components/LoginPage/style.css';
 
 class LoginPage extends React.Component {
 
-    constructor(props, context) {
-        super(props, context);
+    constructor(props) {
+        super(props);
 
         this.state = {
             username: "",

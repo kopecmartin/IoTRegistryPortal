@@ -10,8 +10,8 @@ import UpperToolbar from '../components/UpperToolbar.jsx';
 
 export default class Devices extends React.Component {
 
-    constructor(props, context) {
-        super(props, context);
+    constructor(props) {
+        super(props);
 
         this.state = {
             addNewItemClicked: false,
