@@ -21,7 +21,7 @@ const authenticateDevice = function (token, deviceID) {
             else if (tokenRecord.length !== 1) {
                 reject(403);  // forbidden
             }
-            else if (tokenRecord.id !== deviceID) {     // TODO ?
+            else if (tokenRecord[0].id !== deviceID) {     // TODO ?
                 reject(403);  // forbidden
             }
             else {

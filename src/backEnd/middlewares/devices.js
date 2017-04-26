@@ -35,58 +35,16 @@ module.exports = function (app, _) {
         // TODO suggestion:  if so, use this user's address to the device object in MongoDB
         // TODO suggestion: databaseName could be an array - if it would be wanted, a device can publish values
         // TODO suggestion:  in multiple databases  -- not good idea
-        let body = _.pick(req.body, 'id', 'APIKey', 'ioFeatures');  // TODO update databaseName???
+        let body = _.pick(req.body, 'id', 'APIKey', 'ioFeatures', 'token');  // TODO update databaseName???
 
         authDevice.authenticateAPIKey(body.APIKey).then((API) => {
 
-            // let's check if the id is not already in the database
             Device.findOne({id: body.id}, function (err, device) {
                 if (err) {   // TODO ... is it an external error ???
                     res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                 }
                 else if (device) {
-                    // device already exists => update ioFeatures and create a new device token
-                    device.ioFeatures = body.ioFeatures;
-                    device.updated_at = new Date();
-
-                    device.save(function (err) {
-                        if (err) {
-                            res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
-                        } else {
-
-                            let newDeviceToken = generateDeviceToken(body.id);
-
-                            // save the device token
-                            newDeviceToken.save(function (err) {
-                                if (err) {
-                                    res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
-                                }
-                                else {
-                                    // delete the old token associated to the device
-                                    DeviceToken.remove({
-                                        id: device.id,
-                                        created_at: {$lt: newDeviceToken.created_at}
-                                    }, function (err) {
-                                        if (err) {
-                                            res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
-                                        } else {
-                                            // add the device token to the device object to be returned
-                                            let updatedDevice = {
-                                                token: newDeviceToken.token,
-                                                email: device.email,
-                                                id: device.id,
-                                                ioFeatures: device.ioFeatures,
-                                                created_at: device.created_at,
-                                                updated_at: device.updated_at,
-                                            };
-                                            // return the updated device object with the device token
-                                            res.status(200).json(updatedDevice);
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
+                    res.status(400).json({msg: getTranslation(messageTypes.DEVICE_ALREADY_REGISTERED)});
                 }
                 else {  // register a new device
 
@@ -159,7 +117,66 @@ module.exports = function (app, _) {
                 }
             });
         }, (errCode) => {
-            res.status(403).json({});
+
+            // API authentication failed, let's try if body contains token, if so,
+            // try to authenticate through token
+            authDevice.authenticateDevice(body.token, body.id).then((id) => {
+                console.log("ID", id);
+                // let's check if the id is not already in the database
+                Device.findOne({id: body.id}, function (err, device) {
+                    if (err) {   // TODO ... is it an external error ???
+                        res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                    }
+                    else if (device) {
+                        console.log("here", device);
+                        // device already exists => update ioFeatures and create a new device token
+                        device.ioFeatures = body.ioFeatures;
+                        device.updated_at = new Date();
+
+                        device.save(function (err) {
+                            if (err) {
+                                res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                            } else {
+
+                                let newDeviceToken = generateDeviceToken(body.id);
+
+                                // save the device token
+                                newDeviceToken.save(function (err) {
+                                    if (err) {
+                                        res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                                    }
+                                    else {
+                                        // delete the old token associated to the device
+                                        DeviceToken.remove({
+                                            id: device.id,
+                                            created_at: {$lt: newDeviceToken.created_at}
+                                        }, function (err) {
+                                            if (err) {
+                                                res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                                            } else {
+                                                // add the device token to the device object to be returned
+                                                let updatedDevice = {
+                                                    token: newDeviceToken.token,
+                                                    email: device.email,
+                                                    id: device.id,
+                                                    ioFeatures: device.ioFeatures,
+                                                    created_at: device.created_at,
+                                                    updated_at: device.updated_at,
+                                                };
+                                                // return the updated device object with the device token
+                                                res.status(200).json(updatedDevice);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
+            },(errCode) => {
+                res.status(403).json({});
+            });
         });
     });
 
