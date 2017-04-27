@@ -201,15 +201,24 @@ module.exports = function (app, _) {
                     res.status(403).json({msg: getTranslation(messageTypes.DEVICE_DEREGISTER_INFO)});
                 }
                 else {
-                    Device.findOneAndRemove({id: body.id}, function (err, device) {
+                    // delete membership in a group first
+                    InfluxDatabaseDeviceMem.findOneAndRemove({id: body.id}, function (err, membership) {
                         if (err) {
                             res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
                         }
                         else {
-                            // return deleted device object
-                            res.status(200).json(device);
+                            // delete the device
+                            Device.findOneAndRemove({id: body.id}, function (err, device) {
+                                if (err) {
+                                    res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
+                                }
+                                else {
+                                    // return deleted device object
+                                    res.status(200).json(device);
+                                }
+                            });
                         }
-                    });
+                    })
                 }
             });
         }, (errCode) => {
@@ -244,7 +253,7 @@ module.exports = function (app, _) {
                         // transfer the device to an another user
                         device.email = body.newOwnerEmail;
                     }
-                    // if something were updated
+                    // if something was updated
                     if (body.description || body.newOwnerEmail) {
                         device.updated_at = new Date();
 
@@ -266,6 +275,10 @@ module.exports = function (app, _) {
 
     app.post('/findDevice', function (req, res) {
 
+        // JUST FOR DEBUG PURPOSES
+        Device.find({}, function (err, devs) {
+           console.log(devs);
+        });
     });
 
 };

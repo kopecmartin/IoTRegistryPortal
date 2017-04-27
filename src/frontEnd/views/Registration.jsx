@@ -2,7 +2,7 @@ import Highlight from 'react-syntax-highlight';
 import React from 'react';
 
 import AssociateDB from '../components/Forms/AssociateDB.jsx';
-import InputLabelFormat from '../components/Forms/InputLabelForm.jsx';
+import InputLabelForm from '../components/Forms/InputLabelForm.jsx';
 import ObtainAPIKey from '../components/ObtainAPIKey.jsx';
 import PopupAddNew from '../components/PopupAddNew.jsx';
 import {sendPostRequest, sendDeleteRequest, sendPutRequest} from '../helpers/HTTP_requests.js';
@@ -83,10 +83,11 @@ class Registration extends React.Component {
 
                 <h2>{this.props.content.step1}</h2>
                 <p>{this.props.content.step1Info}</p>
-                <InputLabelFormat required={true}
-                                  help={this.props.content.step1Help}
-                                  onClick={this.addDatabaseTrigger.bind(this)}
-                                  label={this.props.content.influxDB}/>
+                <InputLabelForm required={true}
+                                help={this.props.content.step1Help}
+                                placeholder={this.state.databaseName}
+                                onClick={this.addDatabaseTrigger.bind(this)}
+                                label={this.props.content.influxDB}/>
 
                 {
                     this.state.databaseName !== "" ?

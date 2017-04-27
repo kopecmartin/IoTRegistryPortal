@@ -31,6 +31,9 @@ const API_types = {
     GET_API_KEY: HOSTNAME + "APIKey",
     UPDATE_API_KEY: HOSTNAME + "APIKey",
     DELETE_API_KEY: HOSTNAME + "APIKey",
+
+    DELETE_DEVICE: HOSTNAME + "device",
+    PASS_DEVICE_ANOTHER_USER: HOSTNAME + "device",
 };
 
 export default API_types;
