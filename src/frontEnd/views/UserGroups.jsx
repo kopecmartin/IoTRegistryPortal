@@ -33,10 +33,10 @@ class UserGroups extends React.Component {
     itemAction(type, data) {
         console.log("item action", type, data);
         switch (type) {
-            case "update":
+            case "addMember":
                 this.setState({editData: data});
                 break;
-            case "delete":
+            case "removeGroup":
                 this.setState({pendingOwnGroups: true});
                 sendDeleteRequest("DELETE_USER_GROUP", {id: data._id}).then((data) => {
                     console.log("deleted", JSON.parse(data.text));
@@ -46,6 +46,13 @@ class UserGroups extends React.Component {
 
                 });
                 break;
+            case "removeMember":
+                this.setState({editData: data});
+                break;
+            case "update":
+                this.setState({editData: data});
+                break;
+
         }
     }
 
@@ -81,7 +88,9 @@ class UserGroups extends React.Component {
         };
         let rowActions = [
             {title: this.props.dropDowns.edit, onClick: this.itemAction.bind(this, "update")},
-            {title: this.props.dropDowns.delete, onClick: this.itemAction.bind(this, "delete")}
+            {title: this.props.dropDowns.addMember, onClick: this.itemAction.bind(this, "addMember")},
+            {title: this.props.dropDowns.removeMember, onClick: this.itemAction.bind(this, "removeMember")},
+            {title: this.props.dropDowns.removeGroup, onClick: this.itemAction.bind(this, "removeGroup")}
             ];
 
         return (

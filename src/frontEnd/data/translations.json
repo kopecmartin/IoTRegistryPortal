@@ -13,10 +13,12 @@
       "save": "Save"
     },
     "dropDowns": {
-      "delete": "Delete",
+      "addMember": "Add Member",
       "edit": "Edit",
       "logout": "Logout",
-      "preferences": "Preferences"
+      "preferences": "Preferences",
+      "removeGroup": "Remove Group",
+      "removeMember": "Remove Member"
     },
     "forms": {
       "age": "Age",
