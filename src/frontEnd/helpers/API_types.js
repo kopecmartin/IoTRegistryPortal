@@ -7,6 +7,7 @@ const HOSTNAME = "http://192.168.0.100:3000/";
 
 const API_types = {
     LOGIN: HOSTNAME + "login",
+    GOOGLE_LOGIN: HOSTNAME + "auth/google",
     LOGOUT: HOSTNAME + "logout",
     REGISTER: HOSTNAME + "register",
 

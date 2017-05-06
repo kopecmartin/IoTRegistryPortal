@@ -44,15 +44,27 @@ class LoginPage extends React.Component {
         this.setState({loginForm: !this.state.loginForm});
     }
 
+    googleLogin(){
+        console.log("google login");
+        sendPostRequest("GOOGLE_LOGIN", {}).then((data) => {
+            console.log("loggedIn", JSON.parse(data.text));
+            cookie.save("token", JSON.parse(data.text).token);
+            this.props.changeSite("/portal/dashboard");
+            hashHistory.push('/portal/dashboard');
+        }, (err) => {
+            console.log("access denied", err);
+
+            //TODO show error
+        });
+    }
+
     login() {
-        console.log("login");
         let data = {
             email: this.state.username,
             password: this.state.password
         };
         console.log(data);
         sendPostRequest("LOGIN", data).then((data) => {
-            //data = this.state.tableHeaders.concat(data);
             console.log("loggedIn", JSON.parse(data.text));
             cookie.save("token", JSON.parse(data.text).token);
             this.props.changeSite("/portal/dashboard");
@@ -97,10 +109,11 @@ class LoginPage extends React.Component {
                         </div>
 
                         {this.state.loginForm ? (
-                            <Login usernameOnChange={this.handlerOnChange.bind(this, "name")}
+                            <Login googleLogin={this.googleLogin.bind(this)}
+                                   login={this.login.bind(this)}
                                    passwordOnChange={this.handlerOnChange.bind(this, "password")}
                                    toggle={this.toggle.bind(this)}
-                                   login={this.login.bind(this)}/>
+                                   usernameOnChange={this.handlerOnChange.bind(this, "name")}/>
                         ) : (
                             <Register usernameOnChange={this.handlerOnChange.bind(this, "name")}
                                       passwordOnChange={this.handlerOnChange.bind(this, "password")}

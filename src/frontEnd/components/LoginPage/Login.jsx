@@ -4,11 +4,14 @@ import RememberHelp from './RememberHelp.jsx';
 
 import 'bootstrap-social';
 
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
 let actions = require('./../../actions/actions.js');
 
 
-const Login = ({usernameOnChange, passwordOnChange, login, toggle, content, buttons, switchLanguage}) => {
+const Login = ({
+                   buttons, content, googleLogin, login,
+                   passwordOnChange, switchLanguage, toggle, usernameOnChange
+               }) => {
 
     /*
     const switchL = () => {
@@ -45,13 +48,14 @@ const Login = ({usernameOnChange, passwordOnChange, login, toggle, content, butt
                     <span className="fa fa-facebook"/>
                     {buttons.facebook}
                 </a>
-                <a className="btn btn-block btn-social btn-google">
-                    <span className="fa fa-google"/>
-                    {buttons.google}
-                </a>
                 <a className="btn btn-block btn-social btn-github">
                     <span className="fa fa-github"/>
                     {buttons.github}
+                </a>
+                <a className="btn btn-block btn-social btn-google"
+                   onClick={googleLogin}>
+                    <span className="fa fa-google"/>
+                    {buttons.google}
                 </a>
 
                 <div>

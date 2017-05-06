@@ -34,6 +34,7 @@ require('./backEnd/middlewares/deviceGroups.js')(app, _);
 require('./backEnd/middlewares/influxDatabases.js')(app, _);
 require('./backEnd/middlewares/users.js')(app, _);
 require('./backEnd/middlewares/userGroups.js')(app, _);
+require('./backEnd/middlewares/socialNetRegistration.js')(app, _);
 
 require('./backEnd/middlewares/socketComm.js')(app, io, _, onlineDevices);
 
