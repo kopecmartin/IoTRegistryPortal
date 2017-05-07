@@ -56,7 +56,7 @@ class AddNewMember extends React.Component {
         console.log("submitting", data);
 
         if (this.props.addMember) {
-            sendPostRequest("ADD_GROUP_MEMBER", data).then((res) => {
+            sendPostRequest("ADD_USER_GROUP_MEMBER", data).then((res) => {
                 console.log("response", JSON.parse(res.text));
                 this.setState({pending: false});
                 this.props.cancel()
@@ -65,7 +65,7 @@ class AddNewMember extends React.Component {
             });
         }
         else {
-            sendDeleteRequest("REMOVE_GROUP_MEMBER", data).then((res) => {
+            sendDeleteRequest("REMOVE_USER_GROUP_MEMBER", data).then((res) => {
                 console.log("response", JSON.parse(res.text));
                 this.setState({pending: false});
                 this.props.cancel()

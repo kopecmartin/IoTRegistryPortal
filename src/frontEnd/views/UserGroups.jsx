@@ -1,5 +1,6 @@
 import React from 'react';
 
+import GroupDetail from '../components/GroupDetail.jsx';
 import List from '../components/ItemList/List.jsx';
 import Loading from '../components/Loading.jsx';
 import NewGroupForm from '../components/Forms/AddNewUserGroup.jsx';
@@ -25,6 +26,7 @@ class UserGroups extends React.Component {
             editData: null,
             addMember: false,
             removeMember: false,
+            showDetail: false,
         }
     }
 
@@ -84,9 +86,23 @@ class UserGroups extends React.Component {
             addNewItemClicked: openingWindow,
             editData: null,
             addMember: false,
-            removeMember: false
+            removeMember: false,
+            showDetail: false,
         });
         this.fetchOwnGroupsData();
+    }
+
+    clickedItem(group) {
+        console.log("item::", group);
+        // get members of the group
+        sendPostRequest("GET_USER_GROUPS_MEMBERS", {id: group._id}).then((data) => {
+            console.log("member", JSON.parse(data.text));
+            group['members'] = JSON.parse(data.text);
+            console.log("getting", group);
+            this.setState({showDetail: true, editData: group});
+        }, (err) => {
+
+        });
     }
 
     render() {
@@ -109,10 +125,12 @@ class UserGroups extends React.Component {
                 <div style={style}>
                     <h2>{this.props.content.myGroups}</h2>
                     {this.state.pendingOwnGroups ? <Loading/> : <List data={this.state.ownGroupsData}
+                                                                      onClick={this.clickedItem.bind(this)}
                                                                       dropDownOptions={rowActions}
                                                                       additionalInfo={true}/>}
                     <h2>{this.props.content.memberIn}</h2>
                     {this.state.pendingOtherGroups ? <Loading/> : <List data={this.state.memberInGroupsData}
+                                                                        onClick={this.clickedItem.bind(this)}
                                                                         additionalInfo={true}/>}
                 </div>
 
@@ -141,6 +159,17 @@ class UserGroups extends React.Component {
                                           removeMember={this.state.removeMember}
                                           data={this.state.editData}
                                           cancel={this.addNewItemTrigger.bind(this, false)}/>
+                        </PopupAddNew>
+                        :
+                        null
+                }
+
+                {
+                    this.state.showDetail ?
+                        <PopupAddNew close={this.addNewItemTrigger.bind(this, false)}
+                                     title={this.props.content.groupDetails}>
+                            <GroupDetail data={this.state.editData}
+                                         cancel={this.addNewItemTrigger.bind(this, false)}/>
                         </PopupAddNew>
                         :
                         null

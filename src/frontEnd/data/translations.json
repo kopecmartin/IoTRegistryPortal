@@ -2,6 +2,7 @@
   {
     "lang": "en",
     "buttons": {
+      "cancel": "Cancel",
       "expire": "Expire",
       "extendExpiration": "Extend Expiration",
       "facebook": "Sign Up with Facebook",
@@ -85,11 +86,15 @@
       "userGroups": {
         "addNewMember": "Add a new member of the group",
         "createNew": "Create a new user group",
-        "updateGroup":  "Update the user group",
-        "userGroups": "User Groups",
+        "description": "Description",
+        "groupDetails": "Group Details",
         "myGroups": "My Groups",
         "memberIn": "Member in",
-        "removeMember": "Remove a member of the group"
+        "members": "Members",
+        "ownerEmail": "Owner Email",
+        "removeMember": "Remove a member of the group",
+        "updateGroup":  "Update the user group",
+        "userGroups": "User Groups"
       }
     },
     "warnings": {

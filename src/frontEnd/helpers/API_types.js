@@ -21,8 +21,9 @@ const API_types = {
     GET_GROUPS_BY_OWNERSHIP: HOSTNAME + "getGroupsByOwnership",
     GET_GROUPS_BY_MEMBERSHIP: HOSTNAME + "getGroupsByMembership",
 
-    ADD_GROUP_MEMBER: HOSTNAME + "userGroupMember",
-    REMOVE_GROUP_MEMBER: HOSTNAME + "userGroupMember",
+    ADD_USER_GROUP_MEMBER: HOSTNAME + "userGroupMember",
+    REMOVE_USER_GROUP_MEMBER: HOSTNAME + "userGroupMember",
+    GET_USER_GROUPS_MEMBERS: HOSTNAME + "getUserGroupMembers",
 
     CREATE_DEVICE_GROUP: HOSTNAME + "deviceGroup",
     UPDATE_DEVICE_GROUP: HOSTNAME + "deviceGroup",
