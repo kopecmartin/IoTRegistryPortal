@@ -44,6 +44,7 @@
     "mongodb": "^2.2.24",
     "mongoose": "^4.8.4",
     "morgan": "^1.8.1",
+    "mqtt": "^2.7.1",
     "passport": "^0.3.2",
     "passport-google-auth": "^1.0.1",
     "patternfly": "^3.18.1",
@@ -59,6 +60,7 @@
     "redux": "^3.6.0",
     "request": "^2.81.0",
     "socket.io": "^1.7.3",
+    "socket.io-client": "^1.7.3",
     "superagent": "^3.5.0",
     "underscore": "^1.8.3"
   },

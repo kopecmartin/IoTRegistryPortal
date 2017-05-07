@@ -5,6 +5,23 @@ let Influx = require('influx');
 let InfluxDatabase = require('../models/influxDatabase.js');
 let InfluxDatabaseDeviceMem = require('../models/influxDatabaseDeviceMem.js');
 
+let mqtt = require('mqtt');
+
+// test.mosquitto.org is ONLY test server
+let client  = mqtt.connect('mqtt://test.mosquitto.org');
+
+client.on('connect', function () {
+    client.subscribe('presence');
+
+});
+
+client.on('message', function (topic, message) {
+    // message is Buffer
+    console.log(topic);
+    console.log(message.toString());
+
+});
+
 
 module.exports = function (app, io, _, onlineDevices) {
 
@@ -128,7 +145,7 @@ module.exports = function (app, io, _, onlineDevices) {
                 });
 
             }, (errCode) => {
-                res.status(403).json({});
+                console.log("authentication of the device failed: ", errCode);
             });
         });
 
