@@ -3,6 +3,7 @@ import React from 'react';
 import List from '../components/ItemList/List.jsx';
 import Loading from '../components/Loading.jsx';
 import NewGroupForm from '../components/Forms/AddNewUserGroup.jsx';
+import AddNewMember from '../components/Forms/AddNewMember.jsx';
 import PopupAddNew from '../components/PopupAddNew.jsx';
 import {sendPostRequest, sendDeleteRequest} from '../helpers/HTTP_requests.js';
 import UpperToolbar from '../components/UpperToolbar.jsx';
@@ -19,9 +20,11 @@ class UserGroups extends React.Component {
             addNewItemClicked: false,
             pendingOwnGroups: false,
             pendingOtherGroups: false,
-            ownGroupsData: [],
-            memberInGroupsData: [],
+            ownGroupsData: [],  // user's groups
+            memberInGroupsData: [],  // groups the user is member in
             editData: null,
+            addMember: false,
+            removeMember: false,
         }
     }
 
@@ -34,7 +37,7 @@ class UserGroups extends React.Component {
         console.log("item action", type, data);
         switch (type) {
             case "addMember":
-                this.setState({editData: data});
+                this.setState({addMember: true, editData: data});
                 break;
             case "removeGroup":
                 this.setState({pendingOwnGroups: true});
@@ -47,7 +50,7 @@ class UserGroups extends React.Component {
                 });
                 break;
             case "removeMember":
-                this.setState({editData: data});
+                this.setState({removeMember: true, editData: data});
                 break;
             case "update":
                 this.setState({editData: data});
@@ -76,8 +79,13 @@ class UserGroups extends React.Component {
         });
     }
 
-    addNewItemTrigger(state) {
-        this.setState({addNewItemClicked: state, editData: null});
+    addNewItemTrigger(openingWindow) {
+        this.setState({
+            addNewItemClicked: openingWindow,
+            editData: null,
+            addMember: false,
+            removeMember: false
+        });
         this.fetchOwnGroupsData();
     }
 
@@ -120,6 +128,22 @@ class UserGroups extends React.Component {
                     </PopupAddNew>
                     :
                     null
+                }
+
+                {
+                    this.state.addMember || this.state.removeMember ?
+                        <PopupAddNew close={this.addNewItemTrigger.bind(this, false)}
+                                     title={this.state.addMember ?
+                                         this.props.content.addNewMember
+                                         :
+                                         this.props.content.removeMember}>
+                            <AddNewMember addMember={this.state.addMember}
+                                          removeMember={this.state.removeMember}
+                                          data={this.state.editData}
+                                          cancel={this.addNewItemTrigger.bind(this, false)}/>
+                        </PopupAddNew>
+                        :
+                        null
                 }
 
             </div>

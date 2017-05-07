@@ -83,11 +83,13 @@
         "userGroups": "User Groups"
       },
       "userGroups": {
+        "addNewMember": "Add a new member of the group",
         "createNew": "Create a new user group",
         "updateGroup":  "Update the user group",
         "userGroups": "User Groups",
         "myGroups": "My Groups",
-        "memberIn": "Member in"
+        "memberIn": "Member in",
+        "removeMember": "Remove a member of the group"
       }
     },
     "warnings": {

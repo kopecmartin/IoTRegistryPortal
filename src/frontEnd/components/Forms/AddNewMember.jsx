@@ -2,27 +2,24 @@ import React from 'react';
 
 import InputLabelForm from './InputLabelForm.jsx';
 import FormButtons from '../Buttons/FormButtons.jsx';
-import {sendPostRequest, sendPutRequest} from '../../helpers/HTTP_requests.js';
+import {sendPostRequest, sendDeleteRequest} from '../../helpers/HTTP_requests.js';
 
 import { connect } from 'react-redux'
 
 
-class AddNewUserGroup extends React.Component {
+class AddNewMember extends React.Component {
 
     constructor(props) {
         super(props);
-
-        let editData = this.props.editData;
+        console.log(this.props.addMember, this.props.removeMember);
 
         this.state = {
-            editData: editData,
+            email: "",
 
-            name: editData === null ? "" : editData.name,
-            description: editData === null ? "" : editData.description,
-            permissions: editData === null ? "" : editData.permissions,
+            groupID: this.props.data._id,
 
             errorMsg: null,
-            nameRequired: null,
+            emailRequired: null,
             pending: false,
         }
     }
@@ -49,18 +46,18 @@ class AddNewUserGroup extends React.Component {
 
     handlerSubmitBtn() {
         let data = {
-            name: this.state.name,
-            description: this.state.description,
-            permissions: 666,// this.state.permissions,
+            // memberEmail is a backend attribute for an email of a future member
+            memberEmail: this.state.email,
+            // id is a group ID a new member will be added to
+            id: this.state.groupID,
         };
 
         this.setState({pending: true});
         console.log("submitting", data);
 
-        if (this.state.editData === null) {
-            // create a new group
-            sendPostRequest("CREATE_USER_GROUP", data).then((res) => {
-                console.log("created", JSON.parse(res.text));
+        if (this.props.addMember) {
+            sendPostRequest("ADD_GROUP_MEMBER", data).then((res) => {
+                console.log("response", JSON.parse(res.text));
                 this.setState({pending: false});
                 this.props.cancel()
             }, (err) => {
@@ -68,10 +65,8 @@ class AddNewUserGroup extends React.Component {
             });
         }
         else {
-            // update the group
-            data['id'] = this.state.editData._id;
-            sendPutRequest("UPDATE_USER_GROUP", data).then((res) => {
-                console.log("created", JSON.parse(res.text));
+            sendDeleteRequest("REMOVE_GROUP_MEMBER", data).then((res) => {
+                console.log("response", JSON.parse(res.text));
                 this.setState({pending: false});
                 this.props.cancel()
             }, (err) => {
@@ -84,30 +79,20 @@ class AddNewUserGroup extends React.Component {
         return (
             <div>
                 <form style={{clear: "both"}}>
-                    <InputLabelForm label={this.props.content.groupName}
+                    <InputLabelForm label={this.props.content.email}
                                     type="text"
-                                    placeholder={this.state.name}
+                                    placeholder={this.state.email}
                                     required={true}
-                                    validity={this.state.nameRequired}
-                                    onBlur={this.checkValidity.bind(this, "name")}
-                                    onChange={this.handlerOnChange.bind(this, "name")}
-                    />
-                    <InputLabelForm label={this.props.content.description}
-                                    type="text"
-                                    placeholder={this.state.description}
-                                    onChange={this.handlerOnChange.bind(this, "description")}
-                    />
-                    <InputLabelForm label={this.props.content.permissions}
-                                    type="text"
-                                    placeholder={this.state.permissions}
-                                    onChange={this.handlerOnChange.bind(this, "permissions")}
+                                    validity={this.state.emailRequired}
+                                    onBlur={this.checkValidity.bind(this, "email")}
+                                    onChange={this.handlerOnChange.bind(this, "email")}
                     />
                 </form>
 
                 <FormButtons submit={this.handlerSubmitBtn.bind(this)}
                              cancel={this.props.cancel}
                              errorMsg={
-                                 this.state.nameRequired ?
+                                 this.state.emailRequired ?
                                      this.props.warnings.requiredFields
                                      :
                                      this.state.errorMsg}
@@ -124,4 +109,4 @@ export default connect(
         warnings: state.switchLanguage.content.warnings,
     }),
     null
-)(AddNewUserGroup)
+)(AddNewMember)
