@@ -277,7 +277,8 @@ module.exports = function (app, _) {
 
         // JUST FOR DEBUG PURPOSES
         Device.find({}, function (err, devs) {
-           console.log(devs);
+            console.log(devs);
+            res.status(200).json(devs);
         });
     });
 

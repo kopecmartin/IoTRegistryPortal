@@ -95,7 +95,7 @@ class UserGroups extends React.Component {
     clickedItem(group) {
         console.log("item::", group);
         // get members of the group
-        sendPostRequest("GET_USER_GROUPS_MEMBERS", {id: group._id}).then((data) => {
+        sendPostRequest("GET_USER_GROUP_MEMBERS", {id: group._id}).then((data) => {
             console.log("member", JSON.parse(data.text));
             group['members'] = JSON.parse(data.text);
             console.log("getting", group);

@@ -9,7 +9,7 @@ function CreateItems(props) {
     const dropDownOptions = props.dropDownOptions;
     const createItem = items.map((item) =>
         <ListItem data={item}
-                  key={item.name}
+                  key={item._id}
                   additionalInfo={additionalInfo}
                   dropDownOptions={dropDownOptions}
                   onClick={props.onClick}/>

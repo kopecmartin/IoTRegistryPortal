@@ -56,7 +56,7 @@ const ListItem = ({data, additionalInfo = false, onClick, dropDownOptions}) => {
                 <div className="list-view-pf-body">
                     <div className="list-view-pf-description">
                         <div className="list-group-item-heading">
-                            {data.name}
+                            {data.name || data.id}
                         </div>
                         <div className="list-group-item-text">
                             {data.description}

@@ -23,12 +23,16 @@ const API_types = {
 
     ADD_USER_GROUP_MEMBER: HOSTNAME + "userGroupMember",
     REMOVE_USER_GROUP_MEMBER: HOSTNAME + "userGroupMember",
-    GET_USER_GROUPS_MEMBERS: HOSTNAME + "getUserGroupMembers",
+    GET_USER_GROUP_MEMBERS: HOSTNAME + "getUserGroupMembers",
 
     CREATE_DEVICE_GROUP: HOSTNAME + "deviceGroup",
     UPDATE_DEVICE_GROUP: HOSTNAME + "deviceGroup",
     DELETE_DEVICE_GROUP: HOSTNAME + "deviceGroup",
     GET_DEVICE_GROUPS_BY_OWNERSHIP: HOSTNAME + "getDeviceGroups",
+
+    // unofficial API call for demonstration of obtaining devices
+    // will get all devices!!!
+    GET_DEVICES: HOSTNAME + "findDevice",
 
     CREATE_INFLUX_DATABASE: HOSTNAME + "createInfluxDB",
     GET_OWN_INFLUX_DATABASES: HOSTNAME + "getOwnInfluxDBs",

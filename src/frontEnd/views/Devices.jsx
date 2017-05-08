@@ -15,15 +15,32 @@ export default class Devices extends React.Component {
 
         this.state = {
             addNewItemClicked: false,
+            pendingDevices: false,
             pendingOwnGroups: false,
             pendingOtherGroups: false,
+            devicesData: [],
             ownGroupsData: [],
             memberInGroupsData: [],
         }
     }
 
     componentDidMount() {
+        this.fetchDevices();
         this.fetchOwnGroupsData();
+    }
+
+    fetchDevices() {
+        // fetch only devices which belong to main (/ - root) group
+        // root group is default, a device is added there automatically
+        // after registration
+        this.setState({pendingDevices: true});
+
+        sendPostRequest("GET_DEVICES", {groupID: ""}).then((data) => {
+            console.log("devices", JSON.parse(data.text));
+            this.setState({pendingDevices: false, devicesData: JSON.parse(data.text)});
+        }, (err) => {
+
+        });
     }
 
     fetchOwnGroupsData() {
@@ -51,6 +68,11 @@ export default class Devices extends React.Component {
             <div>
                 <h1>Devices</h1>
                 <UpperToolbar addNewItemTrigger={this.addNewItemTrigger.bind(this)}/>
+
+                <div style={style}>
+                    <h2>My Devices</h2>
+                    {this.state.pendingDevices ? <Loading/> : <List data={this.state.devicesData}/>}
+                </div>
 
                 <div style={style}>
                     <h2>My Device Groups</h2>
