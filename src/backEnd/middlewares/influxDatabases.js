@@ -44,7 +44,6 @@ module.exports = function (app, _) {
                 } else {
                     // send request to influxDB server to create a new database
                     request(options, function (err, resp, body) {
-                        console.log(err, body);
                         if (err) {
                             console.log("error", err);
                             res.status(500).json({msg: getTranslation(messageTypes.INTERNAL_DB_ERROR)});
@@ -82,7 +81,6 @@ module.exports = function (app, _) {
                     res.status(404).json({msg: getTranslation(messageTypes.GROUP_NOT_FOUND)});
                 }
                 else {
-                    console.log("found these", DBs);
                     res.status(200).json(DBs);
                 }
             });

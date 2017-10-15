@@ -4,7 +4,7 @@ echo "[script] Downloading influxdb package"
 wget https://dl.influxdata.com/influxdb/releases/influxdb-1.2.2.x86_64.rpm
 
 echo "[script] Installing the package"
-sudo yum install ./influxdb-1.2.2.x86_64.rpm
+sudo yum install -y ./influxdb-1.2.2.x86_64.rpm
 rm ./influxdb-1.2.2.x86_64.rpm
 
 # start influxDB

@@ -116,7 +116,7 @@ describe('-- Create a new device --', function () {
         }).then(done, done);
     });
 
-
+/*
     it('create a new device with existing id - update ioFeatures', function (done) {
         let body = {
             id: deviceID,
@@ -149,7 +149,7 @@ describe('-- Create a new device --', function () {
                 })
             }).then(done, done);
         });
-    });
+    });*/
 });
 
 

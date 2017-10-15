@@ -2,7 +2,8 @@
 module.exports = {
     "database": {
         "API_keyExpireIn": 30,  // in minutes
-        "API_keyLength": 8, // characters
+        // to string by hex code -> each byte is coded by 2 bytes, therefor length will be double
+        "API_keyLength": 4, // characters
         "tokenExpireIn": 30,  // in minutes
         // 256 bytes means 512 character long token, because random bytes are converted
         // to string by hex code -> each byte is coded by 2 bytes, therefor length of a token will be double

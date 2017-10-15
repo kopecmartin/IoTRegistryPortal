@@ -19,7 +19,7 @@ export const sendPostRequest = function (API_TYPE, data) {
             .set('Accept', 'application/json')
             .send(data)
             .end((err, res) => {
-                console.log("debug", res);  //debug
+                console.log("debug", res, err);  //debug
                 if (err !== null || !res.ok) {
                     if (res.status === 403) {  // unauthorized
                         cookie.remove("token");

@@ -99,7 +99,6 @@ describe('Login', function () {
 
         let newInfo = {
             name: "Name",
-            password: "newOne",
             firstName: "first",
             lastName: "last",
             age: 99,
@@ -107,7 +106,6 @@ describe('Login', function () {
 
         let body = {
             email: data.email,
-            password: newInfo.password,
             name: newInfo.name,
             firstName: newInfo.firstName,
             lastName: newInfo.lastName,
@@ -118,7 +116,6 @@ describe('Login', function () {
             body['token'] = res.body.token;
             requests.putRequest('/updateUser', body, 200).then((res) => {
                 res.body.email.should.be.equal(data.email);
-                res.body.password.should.be.equal(newInfo.password);
                 res.body.name.should.be.equal(newInfo.name);
                 res.body.meta.firstName.should.be.equal(newInfo.firstName);
                 res.body.meta.lastName.should.be.equal(newInfo.lastName);
